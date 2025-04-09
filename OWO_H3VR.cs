@@ -230,12 +230,22 @@ namespace OWO_H3VR
 
 
         [HarmonyPatch(typeof(FistVR.FVRMovementManager), "RocketJump")]
-        public class bhaptics_RocketJump
+        public class OnRocketJump
         {
             [HarmonyPostfix]
             public static void Postfix()
             {
                 owoSkin.Feel("Jump");
+            }
+        }
+
+        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "VomitObject", new Type[] { typeof(FistVR.FVRObject) })]
+        public class OnVomitObject
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                owoSkin.Feel("Vomit");
             }
         }
          */
