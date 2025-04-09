@@ -17,10 +17,10 @@ namespace OWO_H3VR
         private void Awake()
         {
             Log = Logger;
-            Logger.LogMessage("OWO_REPO plugin is loaded!");
+            Logger.LogMessage("OWO_H3VR plugin is loaded!");
             owoSkin = new OWOSkin();
 
-            var harmony = new Harmony("owo.patch.repo");
+            var harmony = new Harmony("owo.patch.h3vr");
             harmony.PatchAll();
         }
 

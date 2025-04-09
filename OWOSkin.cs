@@ -14,8 +14,7 @@ namespace OWO_H3VR
     {
         public bool suitEnabled = false;
         public bool playing = false;
-        public bool beamIsActive = false;
-        private int beamIntensity = 30;
+
         public Dictionary<String, Sensation> FeedbackMap = new Dictionary<String, Sensation>();
 
         public OWOSkin()
@@ -53,7 +52,7 @@ namespace OWO_H3VR
         {
             LOG("Initializing OWO skin");
 
-            var gameAuth = GameAuth.Create(AllBakedSensations()).WithId("14534911");
+            var gameAuth = GameAuth.Create(AllBakedSensations()).WithId("0");
 
             OWO.Configure(gameAuth);
             string[] myIPs = GetIPsFromFile("OWO_Manual_IP.txt");
@@ -144,40 +143,13 @@ namespace OWO_H3VR
             else LOG("Feedback not registered: " + key);
         }
 
-        public void BeamIntensity(float objectMass) 
-        {            
-            beamIntensity = (int)Mathf.Clamp((objectMass/7) * 100, 40, 100);
-        }
 
-        #region Beam loop
 
-        public void StartBeam()
-        {
-            if (beamIsActive) return;
-
-            beamIsActive = true;
-            BeamFuncAsync();
-        }
-
-        public void StopBeam()
-        {
-            beamIsActive=false;
-        }
-
-        public async Task BeamFuncAsync()
-        {
-            while (beamIsActive)
-            {
-                Feel("Grab Beam", 0, beamIntensity);
-                await Task.Delay(200);
-            }
-        }
-
-        #endregion
+ 
 
         public void StopAllHapticFeedback()
         {
-            StopBeam();
+            
 
             OWO.Stop();
         }
