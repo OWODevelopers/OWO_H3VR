@@ -3,12 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace OWO_H3VR
 {
     public class OWOSkin
     {
         public bool suitEnabled = false;
+        private static bool heartBeatIsActive = false;
+        private int heartbeatCount = 0;
 
         public Dictionary<String, Sensation> FeedbackMap = new Dictionary<String, Sensation>();
 
@@ -178,6 +181,34 @@ namespace OWO_H3VR
 
             return sensation;
         }
+
+        #region heart beat loop
+        public void StartHeartBeat()
+        {
+            if (heartBeatIsActive) return;
+
+            heartBeatIsActive = true;
+            HeartBeatFuncAsync();
+        }
+
+        public void StopHeartBeat()
+        {
+            heartbeatCount = 0;
+            heartBeatIsActive = false;
+        }
+
+        public async Task HeartBeatFuncAsync()
+        {
+            while (heartBeatIsActive && heartbeatCount <= 15)
+            {
+                heartbeatCount++;
+                Feel("Heart Beat", 0);
+                await Task.Delay(1000);
+            }
+
+            StopHeartBeat();
+        }
+        #endregion
 
 
         public void StopAllHapticFeedback()
