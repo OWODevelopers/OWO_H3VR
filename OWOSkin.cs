@@ -2,11 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 
 namespace OWO_H3VR
 {
@@ -120,7 +116,7 @@ namespace OWO_H3VR
         }
         #endregion
 
-        public void LOG(String msg) 
+        public void LOG(String msg)
         {
             Plugin.Log.LogInfo(msg);
         }
@@ -142,18 +138,27 @@ namespace OWO_H3VR
             else LOG("Feedback not registered: " + key);
         }
 
+        public static string ConfigureRecoilBulletName(string bulletName)
+        {
+            SensationsDictionary.RecoilSensations.TryGetValue(bulletName, out string sensation);
 
+            if (sensation == null)
+            {
+                return "Pistol";
+            }
 
- 
+            return sensation;
+        }
+
 
         public void StopAllHapticFeedback()
         {
-            
+
 
             OWO.Stop();
         }
 
-        public bool CanFeel() 
+        public bool CanFeel()
         {
             return suitEnabled;
         }
