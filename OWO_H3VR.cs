@@ -127,6 +127,55 @@ namespace OWO_H3VR
             }
         }
 
+
+        #region World interaction
+
+        [HarmonyPatch(typeof(FistVR.FVRSceneSettings), "OnPowerupUse", new Type[] { typeof(FistVR.PowerupType) })]
+        public class OnPowerupUse
+        {
+            [HarmonyPostfix]
+            public static void Postfix(FistVR.PowerupType type)
+            {
+                // Powerup special effects in Take & Hold mode
+                switch (type)
+                {
+                    case FistVR.PowerupType.Health:
+                        owoSkin.Feel("Heal");
+                        break;
+                    case FistVR.PowerupType.Explosive:
+                        owoSkin.Feel("ExplosionFace");
+                        break;
+                    case FistVR.PowerupType.InfiniteAmmo:
+                        owoSkin.Feel("InfiniteAmmo");
+                        break;
+                    case FistVR.PowerupType.Invincibility:
+                        owoSkin.Feel("Invincibility");
+                        break;
+                    case FistVR.PowerupType.QuadDamage:
+                        owoSkin.Feel("QuadDamage");
+                        break;
+                    case FistVR.PowerupType.SpeedUp:
+                        owoSkin.Feel("HeartBeatFast");
+                        break;
+                    case FistVR.PowerupType.Regen:
+                        owoSkin.Feel("Heal");
+                        break;
+                    case FistVR.PowerupType.MuscleMeat:
+                        owoSkin.Feel("MuscleMeat");
+                        break;
+                    case FistVR.PowerupType.Ghosted:
+                        owoSkin.Feel("Ghosted");
+                        break;
+                    case FistVR.PowerupType.Cyclops:
+                        owoSkin.Feel("Cyclops");
+                        break;
+                    default:
+                        owoSkin.LOG($"PowerupType - {type}");
+                        break;
+                }
+            }
+        }
+        #endregion
          */
     }
 }
