@@ -248,6 +248,36 @@ namespace OWO_H3VR
                 owoSkin.Feel("Vomit");
             }
         }
+
+        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "EatBangerJunk")]
+        public class OnEatBangerJunk
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                owoSkin.Feel("Eating");
+            }
+        }
+
+        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "EatHerb")]
+        public class OnEatHerb
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                owoSkin.Feel("Eating");
+            }
+        }
+
+        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "EatMeatCore")]
+        public class OnEatMeatCore
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                owoSkin.Feel("Eating");
+            }
+        }
          */
 
 
