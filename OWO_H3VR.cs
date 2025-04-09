@@ -278,6 +278,25 @@ namespace OWO_H3VR
                 owoSkin.Feel("Eating");
             }
         }
+
+        //CHECK BETTER PLAYER POSITION
+        [HarmonyPatch(typeof(FistVR.GrenadeExplosion), "Explode")]
+        public class bhaptics_GrenadeExplosion
+        {
+            [HarmonyPostfix]
+            public static void Postfix(FistVR.GrenadeExplosion __instance)
+            {
+                Vector3 grenadePosition = __instance.transform.position;
+                
+                //float distance = (grenadePosition - playerPosition).magnitude;
+                
+                // if grenade is more than 40 meters away, ignore explosion.
+                // otherwise scale feedback. If close enough, this is in *addition*
+                // to the explosion damage feedback
+                //int intensity = (int) Math.Max(((40.0f - distance) / 40.0f), 0.0f);
+                //owoSkin.Feel("ExplosionBelly", intensity);
+            }
+        }
          */
 
 
