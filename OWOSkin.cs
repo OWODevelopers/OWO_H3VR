@@ -138,13 +138,13 @@ namespace OWO_H3VR
             else LOG("Feedback not registered: " + key);
         }
 
-        public static string ConfigureRecoilBulletName(string bulletName)
+        public string ConfigureRecoilBulletName(string bulletName)
         {
             SensationsDictionary.RecoilSensations.TryGetValue(bulletName, out string sensation);
 
             if (sensation == null)
             {
-                return "Pistol";
+                return "Default";
             }
 
             return sensation;
