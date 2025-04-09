@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace OWO_H3VR
 {
@@ -203,8 +204,28 @@ namespace OWO_H3VR
 
             return sensation;
         }
+        /*
+        //NEED TO TEST
+        public float GetHitAngle(FistVR.FVRPlayerBody player, Vector3 hit)
+        {
 
-        
+            Vector3 patternOrigin = new Vector3(0f, 0f, 1f);
+            Vector3 hitPosition = hit - player.TorsoTransform.position;
+            Quaternion PlayerRotation = player.TorsoTransform.rotation;
+            Vector3 playerDir = PlayerRotation.eulerAngles;
+            // get rid of the up/down component to analyze xz-rotation
+            Vector3 flattenedHit = new Vector3(hitPosition.x, 0f, hitPosition.z);
+
+            // get angle. .Net < 4.0 does not have a "SignedAngle" function...
+            float hitAngle = Vector3.SignedAngle(flattenedHit, patternOrigin,Vector3.up);
+
+            float myRotation = hitAngle - playerDir.y;
+            myRotation *= -1f;
+
+            return myRotation;
+
+        }
+        */
 
         #region heart beat loop
         public void StartHeartBeat()
