@@ -25,12 +25,12 @@ namespace OWO_H3VR
             var harmony = new Harmony("owo.patch.h3vr");
             harmony.PatchAll();
         }
+        /*
 
         #region Weapon Recoil
         /// <summary>
         /// Commented because missing game libraries
         /// </summary>
-        /*
        [HarmonyPatch(typeof(FistVR.FVRFireArm),"Recoil")]
        public class OnRecoilGun
        {
@@ -90,7 +90,7 @@ namespace OWO_H3VR
        [HarmonyPatch(typeof(FistVR.FVRPhysicalObject))]
        [HarmonyPatch("OnCollisionEnter")]
        [HarmonyPatch(new Type[] { typeof(Collision) })]
-       public class bhaptics_MeleeCollider
+       public class OnMeleeCollider
        {
            [HarmonyPostfix]
            public static void Postfix(FistVR.FVRPhysicalObject __instance, Collision col)
@@ -113,8 +113,20 @@ namespace OWO_H3VR
                owoSkin.FeelWithHand("Melee Attack", intensity, isRightHand);
            }
        }
-         */
 
         #endregion
+
+        // Tried to find the holster function. Did not yet succeed.
+        [HarmonyPatch(typeof(FistVR.FVRFireArmBeltSegment), "EndInteraction", new Type[] { typeof(FistVR.FVRViveHand) })]
+        public class OnHolsterEndInteraction
+        {
+            [HarmonyPostfix]
+            public static void Postfix(FistVR.FVRViveHand hand)
+            {
+                owoSkin.FeelWithHand("Holster",isRightHand: hand.IsThisTheRightHand);
+            }
+        }
+
+         */
     }
 }
