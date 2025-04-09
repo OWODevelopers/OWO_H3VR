@@ -124,6 +124,7 @@ namespace OWO_H3VR
             Plugin.Log.LogInfo(msg);
         }
 
+        #region Feels
         public void Feel(String key, int Priority = 0, int intensity = 0)
         {
             if (FeedbackMap.ContainsKey(key))
@@ -170,6 +171,27 @@ namespace OWO_H3VR
             Feel(key, priority, intensity);
         }
 
+        public void Feel360(String key, float myRotation)
+        {
+            Sensation toSend = FeedbackMap[key];
+
+            if (myRotation >= 0 && myRotation <= 180)
+            {
+                if (myRotation >= 0 && myRotation <= 90) toSend = toSend.WithMuscles(Muscle.Dorsal_L, Muscle.Lumbar_L);
+                else toSend = toSend.WithMuscles(Muscle.Dorsal_R, Muscle.Lumbar_R);
+            }
+            else
+            {
+                if (myRotation >= 270 && myRotation <= 359) toSend = toSend.WithMuscles(Muscle.Pectoral_L, Muscle.Abdominal_L);
+                else toSend.WithMuscles(Muscle.Pectoral_R, Muscle.Abdominal_R);
+            }
+
+            if (!suitEnabled) { return; }
+            OWO.Send(toSend.WithPriority(3));
+        }
+
+        #endregion
+
         public string ConfigureRecoilBulletName(string bulletName)
         {
             SensationsDictionary.RecoilSensations.TryGetValue(bulletName, out string sensation);
@@ -181,6 +203,8 @@ namespace OWO_H3VR
 
             return sensation;
         }
+
+        
 
         #region heart beat loop
         public void StartHeartBeat()
