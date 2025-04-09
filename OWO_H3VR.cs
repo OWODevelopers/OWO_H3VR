@@ -190,6 +190,18 @@ namespace OWO_H3VR
                 owoSkin.Feel("Death");
             }
         }
+
+        [HarmonyPatch(typeof(FistVR.MainMenuScreen), "Start", new Type[] { })]
+        public class bhaptics_LoadMenuScreen
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                //maxHealth = 0; //??
+                
+                owoSkin.StopAllHapticFeedback();
+            }
+        }
          */
 
     }
