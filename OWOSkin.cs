@@ -137,6 +137,35 @@ namespace OWO_H3VR
 
             else LOG("Feedback not registered: " + key);
         }
+        public void FeelWithBothHand(String key, int priority = 0, bool isRightHand = true, int intensity = 0)
+        {
+
+            if (isRightHand)
+            {
+                key += " RL";
+            }
+            else
+            {
+                key += " LR";
+            }
+
+            Feel(key, priority, intensity);
+        }
+
+        public void FeelWithHand(String key, int priority = 0, bool isRightHand = true, int intensity = 0)
+        {
+
+            if (isRightHand)
+            {
+                key += " R";
+            }
+            else
+            {
+                key += " L";
+            }
+
+            Feel(key, priority, intensity);
+        }
 
         public string ConfigureRecoilBulletName(string bulletName)
         {
