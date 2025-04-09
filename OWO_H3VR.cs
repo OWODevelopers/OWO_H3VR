@@ -297,8 +297,57 @@ namespace OWO_H3VR
                 //owoSkin.Feel("ExplosionBelly", intensity);
             }
         }
-         */
 
+        #region Player damage
+
+        [HarmonyPatch(typeof(FistVR.FVRPlayerHitbox))]
+        [HarmonyPatch("Damage")]
+        [HarmonyPatch(new Type[] { typeof(FistVR.Damage) })]
+        public class OnDamageDealtHitbox
+        {
+            [HarmonyPostfix]
+            public static void Postfix(FistVR.FVRPlayerHitbox __instance, FistVR.Damage d)
+            {
+                // Get XZ-angle and y-shift of hit
+                FistVR.FVRPlayerBody myBody = __instance.Body;
+                var angleShift = getAngleAndShift(myBody, d.point);
+
+                // Different hit patterns for different damage classes
+                string feedbackKey = "BulletHit";
+                switch (d.Class)
+                {
+                    case FistVR.Damage.DamageClass.Projectile:
+                        feedbackKey = "BulletHit";
+                        break;
+                    case FistVR.Damage.DamageClass.Melee:
+                        feedbackKey = "BladeHit";
+                        break;
+                    case FistVR.Damage.DamageClass.Explosive:
+                        feedbackKey = "Impact";
+                        break;
+                    case FistVR.Damage.DamageClass.Environment:
+                        feedbackKey = "Impact";
+                        break;
+                    case FistVR.Damage.DamageClass.Abstract:
+                        feedbackKey = "BulletHit";
+                        break;
+                    default:
+                        break;
+                }
+
+                // If it's at the very top, play back a headshot
+                if (angleShift.Value == 0.5f) { tactsuitVr.HeadShot(angleShift.Key); }
+                else { tactsuitVr.PlayBackHit(feedbackKey, angleShift.Key, angleShift.Value); }
+
+                // Logging from when I tried to figure things out
+                //tactsuitVr.LOG("Dealt Body position: " + myBody.TorsoTransform.position.x.ToString() + " " + myBody.TorsoTransform.position.y.ToString() + " " + myBody.TorsoTransform.position.z.ToString());
+                //tactsuitVr.LOG("Dealt Hitpoint: " + d.point.x.ToString() + " " + d.point.y.ToString() + " " + d.point.z.ToString());
+                //tactsuitVr.LOG("Dealt StrikeDir: " + d.strikeDir.x.ToString() + " " + d.strikeDir.y.ToString() + " " + d.strikeDir.z.ToString());
+            }
+        }
+
+        #endregion
+         */
 
     }
 }
