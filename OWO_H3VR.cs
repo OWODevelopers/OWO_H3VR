@@ -178,7 +178,7 @@ namespace OWO_H3VR
         #endregion
 
         [HarmonyPatch(typeof(FistVR.FVRPlayerBody), "KillPlayer", new Type[] { typeof(bool) })]
-        public class bhaptics_PlayerKilled
+        public class OnPlayerKilled
         {
             [HarmonyPostfix]
             public static void Postfix()
@@ -192,7 +192,7 @@ namespace OWO_H3VR
         }
 
         [HarmonyPatch(typeof(FistVR.MainMenuScreen), "Start", new Type[] { })]
-        public class bhaptics_LoadMenuScreen
+        public class OnLoadMenuScreen
         {
             [HarmonyPostfix]
             public static void Postfix()
@@ -202,7 +202,32 @@ namespace OWO_H3VR
                 owoSkin.StopAllHapticFeedback();
             }
         }
-         */
 
+        /// <summary>
+        /// CHECK IF HEALTH AND PLAYER POSITION CAN BE READ BETTER
+        /// </summary>
+        
+        float maxHealth = 0;
+
+        [HarmonyPatch(typeof(FistVR.FVRPlayerBody), "Update")]
+        public class OnPlayerBodyUpdate
+        {
+            [HarmonyPostfix]
+            public static void Postfix(FistVR.FVRPlayerBody __instance)
+            {
+                // I can't get to the world player position in the grenade explosion
+                // function, so just store it globally on update
+                playerPosition = __instance.transform.position;
+
+                float health = __instance.Health;
+                
+                if (health > maxHealth) { maxHealth = health; }
+                
+                if (health < maxHealth / 3.0f) { owoSkin.StartHeartBeat(); }
+                else { owoSkin.StopHeartBeat(); }
+            }
+        }
+
+         */
     }
 }
