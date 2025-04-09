@@ -176,6 +176,21 @@ namespace OWO_H3VR
             }
         }
         #endregion
+
+        [HarmonyPatch(typeof(FistVR.FVRPlayerBody), "KillPlayer", new Type[] { typeof(bool) })]
+        public class bhaptics_PlayerKilled
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+
+                //maxHealth = 0; //??
+
+                owoSkin.StopAllHapticFeedback();
+                owoSkin.Feel("Death");
+            }
+        }
          */
+
     }
 }
