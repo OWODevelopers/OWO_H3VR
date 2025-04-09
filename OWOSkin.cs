@@ -13,7 +13,6 @@ namespace OWO_H3VR
     public class OWOSkin
     {
         public bool suitEnabled = false;
-        public bool playing = false;
 
         public Dictionary<String, Sensation> FeedbackMap = new Dictionary<String, Sensation>();
 
@@ -156,7 +155,7 @@ namespace OWO_H3VR
 
         public bool CanFeel() 
         {
-            return suitEnabled && playing;
+            return suitEnabled;
         }
     }
 }
