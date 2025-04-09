@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using System;
+using UnityEngine;
 
 namespace OWO_H3VR
 {
@@ -25,64 +26,95 @@ namespace OWO_H3VR
             harmony.PatchAll();
         }
 
+        #region Weapon Recoil
         /// <summary>
         /// Commented because missing game libraries
         /// </summary>
-         /*
-        [HarmonyPatch(typeof(FistVR.FVRFireArm),"Recoil")]
-        public class OnRecoilGun
-        {
-            [HarmonyPostfix]
-            public static void Postfix(FistVR.FVRFireArm __instance, bool twoHandStabilized, bool foregripStabilized, bool shoulderStabilized)
-            {
-                string gunName = "";
-                string recoilPrefix;
-                bool fatalError = false;
-                bool hasStock = false;
-                bool twoHanded = false;
-                bool isRightHand = true;
-                float intensity;
-                FistVR.FVRFireArmRecoilProfile myRecoil;
-                FistVR.FireArmRoundType myBulletType;
+        /*
+       [HarmonyPatch(typeof(FistVR.FVRFireArm),"Recoil")]
+       public class OnRecoilGun
+       {
+           [HarmonyPostfix]
+           public static void Postfix(FistVR.FVRFireArm __instance, bool twoHandStabilized, bool foregripStabilized, bool shoulderStabilized)
+           {
+               string gunName = "";
+               string recoilPrefix;
+               bool fatalError = false;
+               bool hasStock = false;
+               bool twoHanded = false;
+               bool isRightHand = true;
+               float intensity;
+               FistVR.FVRFireArmRecoilProfile myRecoil;
+               FistVR.FireArmRoundType myBulletType;
 
-                try { gunName = __instance.name; }
-                catch { owoSkin.LOG("Gun name not found."); }
-                try { hasStock = __instance.HasActiveShoulderStock; }
-                catch { owoSkin.LOG("Gun stock info not found."); }
-                try { twoHanded = __instance.Foregrip.activeSelf; }
-                catch { owoSkin.LOG("Gun foregrip info not found."); }
-                try { myRecoil = __instance.RecoilProfile; }
-                catch { owoSkin.LOG("Recoil profile not found."); fatalError = true; myRecoil = new FistVR.FVRFireArmRecoilProfile(); }
-                try { myBulletType = __instance.RoundType; }
-                catch { owoSkin.LOG("Round type not found."); fatalError = true; myBulletType = new FistVR.FireArmRoundType(); }
+               try { gunName = __instance.name; }
+               catch { owoSkin.LOG("Gun name not found."); }
+               try { hasStock = __instance.HasActiveShoulderStock; }
+               catch { owoSkin.LOG("Gun stock info not found."); }
+               try { twoHanded = __instance.Foregrip.activeSelf; }
+               catch { owoSkin.LOG("Gun foregrip info not found."); }
+               try { myRecoil = __instance.RecoilProfile; }
+               catch { owoSkin.LOG("Recoil profile not found."); fatalError = true; myRecoil = new FistVR.FVRFireArmRecoilProfile(); }
+               try { myBulletType = __instance.RoundType; }
+               catch { owoSkin.LOG("Round type not found."); fatalError = true; myBulletType = new FistVR.FireArmRoundType(); }
 
-                if (fatalError)
-                {
-                    //owoSkin.GunRecoil(isRightHand, "Pistol", 1.0f, (foregripStabilized | twoHandStabilized), shoulderStabilized);
-                    return;
-                }
+               if (fatalError)
+               {
+                   //owoSkin.GunRecoil(isRightHand, "Pistol", 1.0f, (foregripStabilized | twoHandStabilized), shoulderStabilized);
+                   return;
+               }
 
-                recoilPrefix = owoSkin.ConfigureRecoilBulletName(myBulletType);
+               recoilPrefix = owoSkin.ConfigureRecoilBulletName(myBulletType);
 
-                float scaledRecoil = (float)Math.Sqrt((double)myRecoil.XYLinearPerShot) + 0.55f;
+               float scaledRecoil = (float)Math.Sqrt((double)myRecoil.XYLinearPerShot) + 0.55f;
 
-                intensity = Math.Min(scaledRecoil, 1.0f);
+               intensity = Math.Min(scaledRecoil, 1.0f);
 
-                if (recoilPrefix == "Default")
-                {
-                    if ((hasStock) | (twoHanded)) { recoilPrefix = "Rifle"; }
-                    else { recoilPrefix = "Pistol"; }
-                }
+               if (recoilPrefix == "Default")
+               {
+                   if ((hasStock) | (twoHanded)) { recoilPrefix = "Rifle"; }
+                   else { recoilPrefix = "Pistol"; }
+               }
 
-                // Special case for "The OG" shotgun
-                if (gunName.Contains("BreakActionShotgunTheOG")) { recoilPrefix = "HolyMoly"; intensity = 1.0f; }
+               // Special case for "The OG" shotgun
+               if (gunName.Contains("BreakActionShotgunTheOG")) { recoilPrefix = "HolyMoly"; intensity = 1.0f; }
 
-                //owoSkin.GunRecoil(isRightHand, recoilPrefix, intensity, (foregripStabilized | twoHandStabilized), shoulderStabilized);
+               //owoSkin.GunRecoil(isRightHand, recoilPrefix, intensity, (foregripStabilized | twoHandStabilized), shoulderStabilized);
 
-                //On both feels need to identify with hand, intensity and if the other hand is holding.
+               //On both feels need to identify with hand, intensity and if the other hand is holding.
 
-            }
-        }
+           }
+       }
+
+
+       [HarmonyPatch(typeof(FistVR.FVRPhysicalObject))]
+       [HarmonyPatch("OnCollisionEnter")]
+       [HarmonyPatch(new Type[] { typeof(Collision) })]
+       public class bhaptics_MeleeCollider
+       {
+           [HarmonyPostfix]
+           public static void Postfix(FistVR.FVRPhysicalObject __instance, Collision col)
+           {
+               if (!__instance.IsHeld) { return; }
+               if (!__instance.MP.IsMeleeWeapon) { return; }
+               string collideWith = col.collider.name;
+               // Collision with shells or mags shouldn't trigger feedback. Guns are "melee" as well.
+               if (collideWith.Contains("Capsule") | collideWith.Contains("Mag")) { return; }
+               bool twohanded = __instance.IsAltHeld;
+               bool isRightHand = __instance.m_hand.IsThisTheRightHand;
+               float speed = col.relativeVelocity.magnitude;
+               // Also ignore very light bumps 
+               if (speed <= 1.0f) { return; }
+               // Scale feedback with the speed of the collision
+               int intensity = (int)Mathf.Clamp((Math.Min(0.2f + speed / 5.0f, 1.0f))*100, 50, 100);
+
+
+
+               owoSkin.FeelWithHand("Melee Attack", intensity, isRightHand);
+           }
+       }
          */
+
+        #endregion
     }
 }
