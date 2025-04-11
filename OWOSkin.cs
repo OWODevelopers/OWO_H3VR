@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 namespace OWO_H3VR
 {
-    public class OWOSkin
+    public class OWOSkin: MonoBehaviour
     {
         public Communication owoSDK;
         public bool suitEnabled = false;
@@ -50,6 +51,11 @@ namespace OWO_H3VR
             LOG("Initializing OWO skin");
 
             owoSDK.CreateAuth(AllBakedSensations());
+
+            StartCoroutine(owoSDK.StartConnection());
+
+            suitEnabled = true;
+            LOG("OWO suit connected.");
 
             //string[] myIPs = GetIPsFromFile("OWO_Manual_IP.txt");
             //if (myIPs.Length == 0) await OWO.AutoConnect();

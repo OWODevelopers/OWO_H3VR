@@ -16,22 +16,19 @@ namespace OWO_H3VR
         internal static new ManualLogSource Log;
         #pragma warning restore CS0109
 
-        public Communication myOWO;
-        //public static OWOSkin owoSkin;
+        public static OWOSkin owoSkin;
 
         private void Awake()
         {
             Log = Logger;
             Logger.LogMessage("OWO_H3VR plugin is loaded!");
+            
+            owoSkin = new OWOSkin();
 
-            myOWO = new Communication();
-            StartCoroutine(myOWO.StartConnection());
-
-            //owoSkin = new OWOSkin();
-
-            //var harmony = new Harmony("owo.patch.h3vr");
-            //harmony.PatchAll();
+            var harmony = new Harmony("owo.patch.h3vr");
+            harmony.PatchAll();
         }
+
         /*
 
         #region Weapon Recoil
