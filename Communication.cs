@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -10,10 +11,12 @@ namespace OWO_H3VR
     {
         readonly Socket socket;
         readonly byte[] buffer;
-        int gameID = 0;
         int PORT = 54020;
         IPEndPoint remoteEndPoint;
         EndPoint connectedTo = new IPEndPoint(0, 0);
+
+        int gameID = 0;
+        string auth;
 
         public Communication() 
         {
@@ -24,6 +27,7 @@ namespace OWO_H3VR
             socket.Blocking = false;
 
             remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, PORT);
+            auth = $"{gameID}AUTH*";
         }
 
 
@@ -34,7 +38,7 @@ namespace OWO_H3VR
             Plugin.Log.LogInfo("Start...");
             bool connection = false;
             string toSend = "ping";
-            var auth = System.Text.Encoding.UTF8.GetBytes($"{gameID}AUTH*");
+            var authEncoded = System.Text.Encoding.UTF8.GetBytes(auth);
 
             while (!connection)
             {
@@ -61,7 +65,7 @@ namespace OWO_H3VR
 
                 if (result == "okay") 
                 {                    
-                    socket.SendTo(auth, remoteEndPoint);
+                    socket.SendTo(authEncoded, remoteEndPoint);
                     Plugin.Log.LogInfo("HOLY MOLY ");
                 }
 
@@ -83,6 +87,16 @@ namespace OWO_H3VR
             byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*STOP");
 
             socket.SendTo(sendBytes, connectedTo);
+        }
+
+        public void CreateAuth(String[] allSensations) 
+        {            
+            for (int i = 0; i < allSensations.Length; i++) 
+            {
+                auth += $"{i}~{allSensations[i]}#";
+            }
+
+            auth = auth.Substring(0, auth.Length - 1);
         }
 
     }
