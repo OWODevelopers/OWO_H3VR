@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;.NETFramework4.8</TargetFrameworks>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>OWO</AssemblyName>
+        <RootNamespace>OWOGame</RootNamespace>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Title>OWO</Title>
+        <Description>OWO SDK for CSharp projects</Description>
+        <PackageId>OWO</PackageId>
+        <PackageVersion>2.4.1</PackageVersion>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageTags>OWO Haptics Games</PackageTags>
+        <PackageReleaseNotes>Unify NetFramework and Core plugins</PackageReleaseNotes>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="docs\README.md" Pack="true" PackagePath="\" />
+        <None Include="images\icon.png">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DocumentationFile>bin\Debug\OWO.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DocumentationFile>bin\Release\OWOPlugin.xml</DocumentationFile>
+    </PropertyGroup>
+</Project>

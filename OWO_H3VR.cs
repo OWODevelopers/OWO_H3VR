@@ -2,6 +2,8 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using System;
+using System.ComponentModel;
+using System.Threading;
 using UnityEngine;
 
 namespace OWO_H3VR
@@ -14,16 +16,21 @@ namespace OWO_H3VR
         internal static new ManualLogSource Log;
         #pragma warning restore CS0109
 
-        public static OWOSkin owoSkin;
+        public Communication myOWO;
+        //public static OWOSkin owoSkin;
 
         private void Awake()
         {
             Log = Logger;
             Logger.LogMessage("OWO_H3VR plugin is loaded!");
-            owoSkin = new OWOSkin();
 
-            var harmony = new Harmony("owo.patch.h3vr");
-            harmony.PatchAll();
+            myOWO = new Communication();
+            StartCoroutine(myOWO.StartConnection());
+
+            //owoSkin = new OWOSkin();
+
+            //var harmony = new Harmony("owo.patch.h3vr");
+            //harmony.PatchAll();
         }
         /*
 

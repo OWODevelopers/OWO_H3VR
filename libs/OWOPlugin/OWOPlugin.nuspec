@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>OWO</id>
+    <version>2.3.11</version>
+    <title>OWO</title>
+    <authors>OWO</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <readme>docs/README.md</readme>
+    <icon>images/icon.png</icon>
+    <description>OWO SDK for CSharp projects </description>
+    <releaseNotes>Fixed milliseconds since start calculation</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>OWO, Haptics</tags>
+    <dependencies>
+      <group targetFramework="net6.0" />
+	  <group targetFramework=".NETFramework4.8" />
+	  <group targetFramework="net6.0-android33.0" />
+    </dependencies>
+  </metadata>
+<files>
+    <file src="images/icon.png" target="images\" />
+    <file src="lib\**" target="lib/" />
+    <file src="docs/README.md" target="docs\" />
+</files>
+</package>
