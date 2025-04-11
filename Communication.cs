@@ -1,10 +1,7 @@
-﻿using BepInEx.Logging;
-using System.Collections;
-using System.ComponentModel;
+﻿using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using UnityEngine;
 
 namespace OWO_H3VR
@@ -13,8 +10,10 @@ namespace OWO_H3VR
     {
         readonly Socket socket;
         readonly byte[] buffer;
+        int gameID = 0;
         int PORT = 54020;
         IPEndPoint remoteEndPoint;
+        EndPoint connectedTo = new IPEndPoint(0, 0);
 
         public Communication() 
         {
@@ -30,12 +29,12 @@ namespace OWO_H3VR
 
         public IEnumerator StartConnection()
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(.2f);
 
             Plugin.Log.LogInfo("Start...");
             bool connection = false;
             string toSend = "ping";
-            var auth = System.Text.Encoding.UTF8.GetBytes("0*AUTH*");
+            var auth = System.Text.Encoding.UTF8.GetBytes($"{gameID}AUTH*");
 
             while (!connection)
             {
@@ -49,7 +48,7 @@ namespace OWO_H3VR
                 //socket.Send(sendBytes, sendBytes.Length, remoteEndPoint);
 
                 EndPoint endPoint = new IPEndPoint(0, 0);
-                var bytes = socket.Receive(buffer);
+                var bytes = socket.ReceiveFrom(buffer, ref connectedTo);
 
                 //byte[] bytes = udpClient.Receive(ref remoteEndPoint);
                 string result = System.Text.Encoding.ASCII.GetString(buffer,0,bytes);
@@ -68,6 +67,22 @@ namespace OWO_H3VR
 
                 yield return new WaitForSeconds(.1f);
             }
+        }
+
+        public void Send(int sensationId) 
+        {
+            Plugin.Log.LogInfo("Sending sensation");
+
+            byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*SENSATION*{sensationId}");
+
+            socket.SendTo(sendBytes, connectedTo);
+        }
+
+        public void Stop() 
+        {
+            byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*STOP");
+
+            socket.SendTo(sendBytes, connectedTo);
         }
 
     }
