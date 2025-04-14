@@ -17,16 +17,21 @@ namespace OWO_H3VR
         #pragma warning restore CS0109
 
         public static OWOSkin owoSkin;
+        public static OWOSDK owoSDK;
 
         private void Awake()
         {
             Log = Logger;
             Logger.LogMessage("OWO_H3VR plugin is loaded!");
-            
-            owoSkin = new OWOSkin();
 
-            var harmony = new Harmony("owo.patch.h3vr");
-            harmony.PatchAll();
+            owoSDK = new OWOSDK();
+            owoSkin = new OWOSkin(owoSDK);
+
+            StartCoroutine(owoSDK.StartConnection());
+            //owoSkin.FinalizeOWOConnection();
+
+            //var harmony = new Harmony("owo.patch.h3vr");
+            //harmony.PatchAll();
         }
 
         /*

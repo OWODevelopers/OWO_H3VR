@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace OWO_H3VR
 {
-    public class OWOSkin: MonoBehaviour
+    public class OWOSkin
     {
         public OWOSDK owoSDK;
         public bool suitEnabled = false;
@@ -14,9 +14,9 @@ namespace OWO_H3VR
 
         public Dictionary<String, String> FeedbackMap = new Dictionary<String, String>();
 
-        public OWOSkin()
+        public OWOSkin(OWOSDK owoSdkRef)
         {
-            owoSDK = new OWOSDK();
+            owoSDK = owoSdkRef;
             RegisterAllSensationsFiles();
             InitializeOWO();
         }
@@ -46,16 +46,15 @@ namespace OWO_H3VR
             }
         }
 
-        private async void InitializeOWO()
+        private void InitializeOWO()
         {
             LOG("Initializing OWO skin");
 
             owoSDK.CreateAuth(AllBakedSensations());
+            //StartCoroutine(owoSDK.StartConnection());
 
-            StartCoroutine(owoSDK.StartConnection());
-
-            suitEnabled = true;
-            LOG("OWO suit connected.");
+            //suitEnabled = true;
+            //LOG("OWO suit connected.");
 
             //string[] myIPs = GetIPsFromFile("OWO_Manual_IP.txt");
             //if (myIPs.Length == 0) await OWO.AutoConnect();
@@ -71,6 +70,13 @@ namespace OWO_H3VR
             //    Feel("Heart Beat");
             //}
             //if (!suitEnabled) LOG("OWO is not enabled?!?!");
+        }
+
+        public void FinalizeOWOConnection()
+        {
+            suitEnabled = true;
+            LOG("OWO suit connected.");
+            Feel("Heart Beat");
         }
 
         public String[] AllBakedSensations()
@@ -121,22 +127,22 @@ namespace OWO_H3VR
         }
 
         //        #region Feels
-        //        public void Feel(String key, int Priority = 0, int intensity = 0)
-        //        {
-        //            if (FeedbackMap.ContainsKey(key))
-        //            {
-        //                Sensation toSend = FeedbackMap[key];
+        public void Feel(String key, int Priority = 0, int intensity = 0)
+        {
+            if (FeedbackMap.ContainsKey(key))
+            {
+                String toSend = FeedbackMap[key];
 
-        //                if (intensity != 0)
-        //                {
-        //                    toSend = toSend.WithMuscles(Muscle.All.WithIntensity(intensity));
-        //                }
+                //if (intensity != 0)
+                //{
+                //    toSend = toSend.WithMuscles(Muscle.All.WithIntensity(intensity));
+                //}
 
-        //                OWO.Send(toSend.WithPriority(Priority));
-        //            }
+                owoSDK.Send(toSend);
+            }
 
-        //            else LOG("Feedback not registered: " + key);
-        //        }
+            else LOG("Feedback not registered: " + key);
+        }
         //        public void FeelWithBothHand(String key, int priority = 0, bool isRightHand = true, int intensity = 0)
         //        {
 

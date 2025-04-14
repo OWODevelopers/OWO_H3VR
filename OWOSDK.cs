@@ -26,7 +26,8 @@ namespace OWO_H3VR
             socket.ReceiveTimeout = 2500;
             socket.Blocking = false;
 
-            remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, PORT);
+            //remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, PORT);
+            remoteEndPoint = new IPEndPoint(IPAddress.Parse("192.168.217.94"), PORT);
             auth = $"{gameID}*AUTH*";
         }
 
@@ -34,7 +35,7 @@ namespace OWO_H3VR
 
         public IEnumerator StartConnection()
         {
-            yield return new WaitForSeconds(.2f);
+            yield return new WaitForSeconds(.1f);
 
             Plugin.Log.LogInfo("Start...");
             bool connection = false;
@@ -56,17 +57,19 @@ namespace OWO_H3VR
                 var bytes = socket.ReceiveFrom(buffer, ref connectedTo);
 
                 //byte[] bytes = udpClient.Receive(ref remoteEndPoint);
-                string result = System.Text.Encoding.ASCII.GetString(buffer,0,bytes);
+                string result = System.Text.Encoding.ASCII.GetString(buffer, 0, bytes);
                 //Plugin.Log.LogInfo("WHAT WAS THAT " + result);
 
                 if (result == "pong")
                 {
+                    Plugin.Log.LogInfo("PONG");
+
                     connection = true;
                 }
 
-                if (result == "okay") 
-                {                    
-                    socket.SendTo(authEncoded, remoteEndPoint);                    
+                if (result == "okay")
+                {
+                    socket.SendTo(authEncoded, remoteEndPoint);
                 }
 
                 yield return new WaitForSeconds(.1f);
@@ -86,11 +89,11 @@ namespace OWO_H3VR
         #endregion
 
         #region Communication
-        public void Send(int sensationId) 
+        public void Send(string sensation) 
         {
-            Plugin.Log.LogInfo("Sending sensation");
+            Plugin.Log.LogInfo($"SENDING SENSATION: {gameID}*SENSATION*{sensation}");
 
-            byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*SENSATION*{sensationId}");
+            byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*SENSATION*{sensation}");
 
             socket.SendTo(sendBytes, connectedTo);
         }
@@ -106,10 +109,11 @@ namespace OWO_H3VR
         {            
             for (int i = 0; i < allSensations.Length; i++) 
             {
-                auth += $"{i}~{allSensations[i]}#";
+                auth += $"{allSensations[i]}#";
             }
 
             auth = auth.Substring(0, auth.Length - 1);
+            Plugin.Log.LogInfo($"### AUTH: {auth}");
         }
 
         #endregion
