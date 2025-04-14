@@ -27,7 +27,7 @@ namespace OWO_H3VR
             socket.Blocking = false;
 
             remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, PORT);
-            auth = $"{gameID}AUTH*";
+            auth = $"{gameID}*AUTH*";
         }
 
 
