@@ -7,7 +7,7 @@ namespace OWO_H3VR
 {
     public class OWOSkin: MonoBehaviour
     {
-        public Communication owoSDK;
+        public OWOSDK owoSDK;
         public bool suitEnabled = false;
         //        private static bool heartBeatIsActive = false;
         //        private int heartbeatCount = 0;
@@ -16,7 +16,7 @@ namespace OWO_H3VR
 
         public OWOSkin()
         {
-            owoSDK = new Communication();
+            owoSDK = new OWOSDK();
             RegisterAllSensationsFiles();
             InitializeOWO();
         }
@@ -253,14 +253,12 @@ namespace OWO_H3VR
 
         public void StopAllHapticFeedback()
         {
-
-
             owoSDK.Stop();
         }
 
-        //        public bool CanFeel()
-        //        {
-        //            return suitEnabled;
-        //        }
+        public bool CanFeel()
+        {
+            return suitEnabled;
+        }
     }
     }

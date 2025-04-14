@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace OWO_H3VR
 {
-    public class Communication
+    public class OWOSDK
     {
         readonly Socket socket;
         readonly byte[] buffer;
@@ -18,7 +18,7 @@ namespace OWO_H3VR
         int gameID = 0;
         string auth;
 
-        public Communication() 
+        public OWOSDK() 
         {
             buffer = new byte[1024];
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
