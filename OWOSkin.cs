@@ -21,7 +21,7 @@ namespace OWO_H3VR
             InitializeOWO();
         }
 
-        //        #region Skin Configuration
+        #region Skin Configuration
 
         private void RegisterAllSensationsFiles()
         {
@@ -85,35 +85,35 @@ namespace OWO_H3VR
             return result.ToArray();
         }
 
-        //        public string[] GetIPsFromFile(string filename)
+        //public string[] GetIPsFromFile(string filename)
+        //{
+        //    List<string> ips = new List<string>();
+        //    string filePath = Directory.GetCurrentDirectory() + "\\BepinEx\\Plugins\\OWO" + filename;
+        //    if (File.Exists(filePath))
+        //    {
+        //        LOG("Manual IP file found: " + filePath);
+        //        var lines = File.ReadLines(filePath);
+        //        foreach (var line in lines)
         //        {
-        //            List<string> ips = new List<string>();
-        //            string filePath = Directory.GetCurrentDirectory() + "\\BepinEx\\Plugins\\OWO" + filename;
-        //            if (File.Exists(filePath))
-        //            {
-        //                LOG("Manual IP file found: " + filePath);
-        //                var lines = File.ReadLines(filePath);
-        //                foreach (var line in lines)
-        //                {
-        //                    if (IPAddress.TryParse(line, out _)) ips.Add(line);
-        //                    else LOG("IP not valid? ---" + line + "---");
-        //                }
-        //            }
-        //            return ips.ToArray();
+        //            if (IPAddress.TryParse(line, out _)) ips.Add(line);
+        //            else LOG("IP not valid? ---" + line + "---");
         //        }
+        //    }
+        //    return ips.ToArray();
+        //}
 
-        //        ~OWOSkin()
-        //        {
-        //            LOG("Destructor called");
-        //            DisconnectOWO();
-        //        }
+        ~OWOSkin()
+        {
+            LOG("Destructor called");
+            DisconnectOWO();
+        }
 
-        //        public void DisconnectOWO()
-        //        {
-        //            LOG("Disconnecting OWO skin.");
-        //            OWO.Disconnect();
-        //        }
-        //        #endregion
+        public void DisconnectOWO()
+        {
+            LOG("Disconnecting OWO skin.");
+            owoSDK.Disconnect();
+        }
+#endregion
 
         public void LOG(String msg)
         {
@@ -251,12 +251,12 @@ namespace OWO_H3VR
         //        #endregion
 
 
-        //        public void StopAllHapticFeedback()
-        //        {
+        public void StopAllHapticFeedback()
+        {
 
 
-        //            OWO.Stop();
-        //        }
+            owoSDK.Stop();
+        }
 
         //        public bool CanFeel()
         //        {

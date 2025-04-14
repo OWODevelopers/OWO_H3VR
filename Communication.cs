@@ -30,6 +30,7 @@ namespace OWO_H3VR
             auth = $"{gameID}*AUTH*";
         }
 
+        #region Connection State
 
         public IEnumerator StartConnection()
         {
@@ -56,7 +57,7 @@ namespace OWO_H3VR
 
                 //byte[] bytes = udpClient.Receive(ref remoteEndPoint);
                 string result = System.Text.Encoding.ASCII.GetString(buffer,0,bytes);
-                Plugin.Log.LogInfo("WHAT WAS THAT " + result);
+                //Plugin.Log.LogInfo("WHAT WAS THAT " + result);
 
                 if (result == "pong")
                 {
@@ -65,14 +66,26 @@ namespace OWO_H3VR
 
                 if (result == "okay") 
                 {                    
-                    socket.SendTo(authEncoded, remoteEndPoint);
-                    Plugin.Log.LogInfo("HOLY MOLY ");
+                    socket.SendTo(authEncoded, remoteEndPoint);                    
                 }
 
                 yield return new WaitForSeconds(.1f);
             }
         }
 
+        public void Disconnect()
+        {
+            Plugin.Log.LogInfo("Sending sensation");
+
+            byte[] sendBytes = Encoding.UTF8.GetBytes($"OWO_Close");
+            socket.SendTo(sendBytes, connectedTo);
+
+            socket.Close();
+        }
+
+        #endregion
+
+        #region Communication
         public void Send(int sensationId) 
         {
             Plugin.Log.LogInfo("Sending sensation");
@@ -98,6 +111,8 @@ namespace OWO_H3VR
 
             auth = auth.Substring(0, auth.Length - 1);
         }
+
+        #endregion
 
     }
 }
