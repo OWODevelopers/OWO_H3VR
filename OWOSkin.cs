@@ -132,7 +132,7 @@ namespace OWO_H3VR
             Plugin.Log.LogInfo(msg);
         }
 
-        //        #region Feels
+        #region Feels
         public void Feel(String key, int Priority = 0, int intensity = 0)
         {
             if (FeedbackMap.ContainsKey(key))
@@ -170,20 +170,7 @@ namespace OWO_H3VR
             Feel(key, priority, intensity);
         }
 
-        //        public void FeelWithBothHand(String key, int priority = 0, bool isRightHand = true, int intensity = 0)
-        //        {
-
-        //            if (isRightHand)
-        //            {
-        //                key += " RL";
-        //            }
-        //            else
-        //            {
-        //                key += " LR";
-        //            }
-
-        //            Feel(key, priority, intensity);
-        //        }
+        #endregion
 
 
         //        public void Feel360(String key, float myRotation)
