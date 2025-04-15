@@ -14,6 +14,7 @@ namespace OWO_H3VR
         int PORT = 54020;
         IPEndPoint remoteEndPoint;
         EndPoint connectedTo = new IPEndPoint(0, 0);
+        public bool isConnected = false;
 
         int gameID = 0;
         string auth;
@@ -26,8 +27,8 @@ namespace OWO_H3VR
             socket.ReceiveTimeout = 2500;
             socket.Blocking = false;
 
-            //remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, PORT);
-            remoteEndPoint = new IPEndPoint(IPAddress.Parse("192.168.217.94"), PORT);
+            remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, PORT);
+            //remoteEndPoint = new IPEndPoint(IPAddress.Parse("192.168.217.94"), PORT);
             auth = $"{gameID}*AUTH*";
         }
 
@@ -37,42 +38,52 @@ namespace OWO_H3VR
         {
             yield return new WaitForSeconds(.1f);
 
-            Plugin.Log.LogInfo("Start...");
-            bool connection = false;
+            Plugin.Log.LogInfo("Start...");            
             string toSend = "ping";
             var authEncoded = System.Text.Encoding.UTF8.GetBytes(auth);
 
-            while (!connection)
+            while (!isConnected)
             {
                 Plugin.Log.LogInfo("Sending ping !");
 
                 byte[] sendBytes = Encoding.UTF8.GetBytes(toSend);
-
                 socket.SendTo(sendBytes, remoteEndPoint);
 
                 yield return new WaitForSeconds(.2f);
-                //socket.Send(sendBytes, sendBytes.Length, remoteEndPoint);
 
-                EndPoint endPoint = new IPEndPoint(0, 0);
-                var bytes = socket.ReceiveFrom(buffer, ref connectedTo);
-
-                //byte[] bytes = udpClient.Receive(ref remoteEndPoint);
-                string result = System.Text.Encoding.ASCII.GetString(buffer, 0, bytes);
-                //Plugin.Log.LogInfo("WHAT WAS THAT " + result);
-
-                if (result == "pong")
+                try
                 {
-                    Plugin.Log.LogInfo("PONG");
+                    socket.Blocking = false; // No bloquear la recepción inmediatamente
+                    var bytes = socket.ReceiveFrom(buffer, ref connectedTo);
+                    socket.Blocking = true;
 
-                    connection = true;
+                    if (bytes > 0)
+                    {
+                        string result = System.Text.Encoding.ASCII.GetString(buffer, 0, bytes);
+
+                        //Plugin.Log.LogInfo("WHAT WAS THAT " + result);
+
+                        if (result == "pong")
+                        {
+                            Plugin.Log.LogInfo("PONG");
+
+                            isConnected = true;
+                        }
+
+                        if (result == "okay")
+                        {
+                            socket.SendTo(authEncoded, connectedTo);
+                        }
+                    }
                 }
-
-                if (result == "okay")
+                catch (SocketException ex)
                 {
-                    socket.SendTo(authEncoded, remoteEndPoint);
-                }
+                    if (ex.SocketErrorCode != SocketError.WouldBlock) Plugin.Log.LogError($"SocketEX: {ex.Message}");
 
-                yield return new WaitForSeconds(.1f);
+                    else Plugin.Log.LogInfo("SocketEX: No data received");            
+                }                    
+
+                yield return new WaitForSeconds(.2f);
             }
         }
 

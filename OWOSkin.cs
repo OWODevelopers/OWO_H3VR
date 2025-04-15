@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -72,11 +73,16 @@ namespace OWO_H3VR
             //if (!suitEnabled) LOG("OWO is not enabled?!?!");
         }
 
-        public void FinalizeOWOConnection()
+        public IEnumerator FinalizeOWOConnection()
         {
+            while (!owoSDK.isConnected) {
+                yield return new WaitForSeconds(.2f);
+            }
+
             suitEnabled = true;
             LOG("OWO suit connected.");
             Feel("Heart Beat");
+            yield return null;
         }
 
         public String[] AllBakedSensations()

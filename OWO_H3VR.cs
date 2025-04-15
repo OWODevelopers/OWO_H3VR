@@ -1,10 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using System;
-using System.ComponentModel;
-using System.Threading;
-using UnityEngine;
+using FistVR;
 
 namespace OWO_H3VR
 {
@@ -27,11 +24,21 @@ namespace OWO_H3VR
             owoSDK = new OWOSDK();
             owoSkin = new OWOSkin(owoSDK);
 
-            StartCoroutine(owoSDK.StartConnection());
-            //owoSkin.FinalizeOWOConnection();
+            StartCoroutine(owoSDK.StartConnection());            
+            StartCoroutine(owoSkin.FinalizeOWOConnection());
 
-            //var harmony = new Harmony("owo.patch.h3vr");
-            //harmony.PatchAll();
+            var harmony = new Harmony("owo.patch.h3vr");
+            harmony.PatchAll();
+        }
+
+        [HarmonyPatch(typeof(FVRFireArm), "recoil")]
+        public class onRecoil
+        {
+            [HarmonyPostfix]
+            public static void postfix(FVRFireArm __instance, bool twohandstabilized, bool foregripstabilized, bool shoulderstabilized)
+            {
+                owoSkin.LOG("FVRFireArm - Recoil");
+            }
         }
 
         /*
@@ -40,57 +47,57 @@ namespace OWO_H3VR
         /// <summary>
         /// Commented because missing game libraries
         /// </summary>
-       [HarmonyPatch(typeof(FistVR.FVRFireArm),"Recoil")]
-       public class OnRecoilGun
+       [harmonypatch(typeof(fistvr.fvrfirearm),"recoil")]
+       public class onrecoilgun
        {
-           [HarmonyPostfix]
-           public static void Postfix(FistVR.FVRFireArm __instance, bool twoHandStabilized, bool foregripStabilized, bool shoulderStabilized)
+           [harmonypostfix]
+           public static void postfix(fistvr.fvrfirearm __instance, bool twohandstabilized, bool foregripstabilized, bool shoulderstabilized)
            {
-               string gunName = "";
-               string recoilPrefix;
-               bool fatalError = false;
-               bool hasStock = false;
-               bool twoHanded = false;
-               bool isRightHand = true;
+               string gunname = "";
+               string recoilprefix;
+               bool fatalerror = false;
+               bool hasstock = false;
+               bool twohanded = false;
+               bool isrighthand = true;
                float intensity;
-               FistVR.FVRFireArmRecoilProfile myRecoil;
-               FistVR.FireArmRoundType myBulletType;
+               fistvr.fvrfirearmrecoilprofile myrecoil;
+               fistvr.firearmroundtype mybullettype;
 
-               try { gunName = __instance.name; }
-               catch { owoSkin.LOG("Gun name not found."); }
-               try { hasStock = __instance.HasActiveShoulderStock; }
-               catch { owoSkin.LOG("Gun stock info not found."); }
-               try { twoHanded = __instance.Foregrip.activeSelf; }
-               catch { owoSkin.LOG("Gun foregrip info not found."); }
-               try { myRecoil = __instance.RecoilProfile; }
-               catch { owoSkin.LOG("Recoil profile not found."); fatalError = true; myRecoil = new FistVR.FVRFireArmRecoilProfile(); }
-               try { myBulletType = __instance.RoundType; }
-               catch { owoSkin.LOG("Round type not found."); fatalError = true; myBulletType = new FistVR.FireArmRoundType(); }
+               try { gunname = __instance.name; }
+               catch { owoskin.log("gun name not found."); }
+               try { hasstock = __instance.hasactiveshoulderstock; }
+               catch { owoskin.log("gun stock info not found."); }
+               try { twohanded = __instance.foregrip.activeself; }
+               catch { owoskin.log("gun foregrip info not found."); }
+               try { myrecoil = __instance.recoilprofile; }
+               catch { owoskin.log("recoil profile not found."); fatalerror = true; myrecoil = new fistvr.fvrfirearmrecoilprofile(); }
+               try { mybullettype = __instance.roundtype; }
+               catch { owoskin.log("round type not found."); fatalerror = true; mybullettype = new fistvr.firearmroundtype(); }
 
-               if (fatalError)
+               if (fatalerror)
                {
-                   //owoSkin.GunRecoil(isRightHand, "Pistol", 1.0f, (foregripStabilized | twoHandStabilized), shoulderStabilized);
+                   owoskin.gunrecoil(isrighthand, "pistol", 1.0f, (foregripstabilized | twohandstabilized), shoulderstabilized);
                    return;
                }
 
-               recoilPrefix = owoSkin.ConfigureRecoilBulletName(myBulletType);
+               recoilprefix = owoskin.configurerecoilbulletname(mybullettype);
 
-               float scaledRecoil = (float)Math.Sqrt((double)myRecoil.XYLinearPerShot) + 0.55f;
+               float scaledrecoil = (float)math.sqrt((double)myrecoil.xylinearpershot) + 0.55f;
 
-               intensity = Math.Min(scaledRecoil, 1.0f);
+               intensity = math.min(scaledrecoil, 1.0f);
 
-               if (recoilPrefix == "Default")
+               if (recoilprefix == "default")
                {
-                   if ((hasStock) | (twoHanded)) { recoilPrefix = "Rifle"; }
-                   else { recoilPrefix = "Pistol"; }
+                   if ((hasstock) | (twohanded)) { recoilprefix = "rifle"; }
+                   else { recoilprefix = "pistol"; }
                }
 
-               // Special case for "The OG" shotgun
-               if (gunName.Contains("BreakActionShotgunTheOG")) { recoilPrefix = "HolyMoly"; intensity = 1.0f; }
+                special case for "the og" shotgun
+               if (gunname.contains("breakactionshotguntheog")) { recoilprefix = "holymoly"; intensity = 1.0f; }
 
-               //owoSkin.GunRecoil(isRightHand, recoilPrefix, intensity, (foregripStabilized | twoHandStabilized), shoulderStabilized);
+               owoskin.gunrecoil(isrighthand, recoilprefix, intensity, (foregripstabilized | twohandstabilized), shoulderstabilized);
 
-               //On both feels need to identify with hand, intensity and if the other hand is holding.
+               on both feels need to identify with hand, intensity and if the other hand is holding.
 
            }
        }
