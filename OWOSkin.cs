@@ -137,12 +137,17 @@ namespace OWO_H3VR
         {
             if (FeedbackMap.ContainsKey(key))
             {
-                String toSend = FeedbackMap[key];
+                String toSend = FeedbackMap[key].Split('~')[0]; //enviamos solo el ID al ser baked
 
-                //if (intensity != 0)
-                //{
-                //    toSend = toSend.WithMuscles(Muscle.All.WithIntensity(intensity));
-                //}
+                if (intensity != 0)
+                {
+                    toSend += "|"; //separamos los musculos
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        toSend += $"{i}%{intensity},"; //asignamos la intensidad a cada musculo
+                    }                    
+                }
 
                 owoSDK.Send(toSend);
             }
