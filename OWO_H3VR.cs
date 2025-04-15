@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using FistVR;
+using System;
 
 namespace OWO_H3VR
 {
@@ -31,15 +32,139 @@ namespace OWO_H3VR
             harmony.PatchAll();
         }
 
-        [HarmonyPatch(typeof(FVRFireArm), "recoil")]
-        public class onRecoil
+        [HarmonyPatch(typeof(FVRFireArm), "Recoil")]
+        public class OnRecoil
         {
             [HarmonyPostfix]
-            public static void postfix(FVRFireArm __instance, bool twohandstabilized, bool foregripstabilized, bool shoulderstabilized)
+            public static void postfix(FVRFireArm __instance)
             {
-                owoSkin.LOG("FVRFireArm - Recoil");
+                owoSkin.LOG($"FVRFireArm - Recoil Right:{__instance.m_hand.IsThisTheRightHand}");
+                
+                string gunname = "";
+                try { gunname = __instance.name; }
+                catch { owoSkin.LOG("gun name not found."); }
+
+                if (!owoSkin.suitEnabled) return;
+
+                owoSkin.FeelWithHand("Gun Recoil", 0, __instance.m_hand.IsThisTheRightHand);
+
             }
         }
+
+        [HarmonyPatch(typeof(FVRMovementManager), "Jump")]
+        public class OnJump
+        {
+            [HarmonyPostfix]
+            public static void postfix()
+            {
+                owoSkin.LOG($"FVRMovementManager - Jump");
+
+                if (!owoSkin.suitEnabled) return;
+
+                owoSkin.Feel("Jump");
+
+            }
+        }
+
+        #region World interaction
+
+        [HarmonyPatch(typeof(FistVR.FVRSceneSettings), "OnPowerupUse", new Type[] { typeof(FistVR.PowerupType) })]
+        public class OnPowerupUse
+        {
+            [HarmonyPostfix]
+            public static void Postfix(FistVR.PowerupType type)
+            {
+                // Powerup special effects in Take & Hold mode
+                switch (type)
+                {
+                    case FistVR.PowerupType.Health:
+                    case FistVR.PowerupType.Regen:
+                        owoSkin.Feel("Heal");
+                        break;
+                    case FistVR.PowerupType.Explosive:
+                        owoSkin.Feel("Explosion Face");
+                        break;
+                    case FistVR.PowerupType.InfiniteAmmo:
+                        owoSkin.Feel("Infinite Ammo");
+                        break;
+                    case FistVR.PowerupType.Invincibility:
+                        owoSkin.Feel("Invincibility");
+                        break;
+                    case FistVR.PowerupType.QuadDamage:
+                        owoSkin.Feel("QuadDamage");
+                        break;
+                    case FistVR.PowerupType.SpeedUp:
+                        owoSkin.Feel("Heart Beat Fast");
+                        break;
+                    case FistVR.PowerupType.MuscleMeat:
+                        owoSkin.Feel("Muscle Meat");
+                        break;
+                    case FistVR.PowerupType.Ghosted:
+                        owoSkin.Feel("Ghosted");
+                        break;
+                    case FistVR.PowerupType.Cyclops:
+                        owoSkin.Feel("Cyclops");
+                        break;
+                    default:
+                        owoSkin.LOG($"PowerupType - {type}");
+                        break;
+                }
+            }
+        }
+        #endregion
+
+        #region Player damage
+
+        [HarmonyPatch(typeof(FVRPlayerHitbox), "Damage", new Type[] { typeof(Damage)})]
+        public class OnDamageDealtHitbox
+        {
+            [HarmonyPostfix]
+            public static void Postfix(FistVR.FVRPlayerHitbox __instance, FistVR.Damage d)
+            {
+                // Get XZ-angle and y-shift of hit
+                FVRPlayerBody myBody = __instance.Body;
+                //var angleShift = getAngleAndShift(myBody, d.point);
+
+                // Different hit patterns for different damage classes
+                string feedbackKey = "BulletHit";
+                switch (d.Class)
+                {
+                    case FistVR.Damage.DamageClass.Projectile:
+                        feedbackKey = "Bullet Hit";
+                        break;
+                    case FistVR.Damage.DamageClass.Melee:
+                        feedbackKey = "Blade Hit";
+                        break;
+                    case FistVR.Damage.DamageClass.Explosive:
+                        feedbackKey = "Impact";
+                        break;
+                    case FistVR.Damage.DamageClass.Environment:
+                        feedbackKey = "Impact";
+                        break;
+                    case FistVR.Damage.DamageClass.Abstract:
+                        feedbackKey = "Bullet Hit";
+                        break;
+                    default:
+                        break;
+                }
+
+                owoSkin.LOG($"Damage by: {feedbackKey}");
+                
+                if (!owoSkin.suitEnabled) return;
+                owoSkin.Feel(feedbackKey);
+
+                // If it's at the very top, play back a headshot
+                //if (angleShift.Value == 0.5f) { tactsuitVr.HeadShot(angleShift.Key); }
+                //else { tactsuitVr.PlayBackHit(feedbackKey, angleShift.Key, angleShift.Value); }
+
+                // Logging from when I tried to figure things out
+                //tactsuitVr.LOG("Dealt Body position: " + myBody.TorsoTransform.position.x.ToString() + " " + myBody.TorsoTransform.position.y.ToString() + " " + myBody.TorsoTransform.position.z.ToString());
+                //tactsuitVr.LOG("Dealt Hitpoint: " + d.point.x.ToString() + " " + d.point.y.ToString() + " " + d.point.z.ToString());
+                //tactsuitVr.LOG("Dealt StrikeDir: " + d.strikeDir.x.ToString() + " " + d.strikeDir.y.ToString() + " " + d.strikeDir.z.ToString());
+            }
+        }
+
+        #endregion
 
         /*
 
@@ -142,56 +267,6 @@ namespace OWO_H3VR
                 owoSkin.FeelWithHand("Holster",isRightHand: hand.IsThisTheRightHand);
             }
         }
-
-
-        #region World interaction
-
-        [HarmonyPatch(typeof(FistVR.FVRSceneSettings), "OnPowerupUse", new Type[] { typeof(FistVR.PowerupType) })]
-        public class OnPowerupUse
-        {
-            [HarmonyPostfix]
-            public static void Postfix(FistVR.PowerupType type)
-            {
-                // Powerup special effects in Take & Hold mode
-                switch (type)
-                {
-                    case FistVR.PowerupType.Health:
-                        owoSkin.Feel("Heal");
-                        break;
-                    case FistVR.PowerupType.Explosive:
-                        owoSkin.Feel("ExplosionFace");
-                        break;
-                    case FistVR.PowerupType.InfiniteAmmo:
-                        owoSkin.Feel("InfiniteAmmo");
-                        break;
-                    case FistVR.PowerupType.Invincibility:
-                        owoSkin.Feel("Invincibility");
-                        break;
-                    case FistVR.PowerupType.QuadDamage:
-                        owoSkin.Feel("QuadDamage");
-                        break;
-                    case FistVR.PowerupType.SpeedUp:
-                        owoSkin.Feel("HeartBeatFast");
-                        break;
-                    case FistVR.PowerupType.Regen:
-                        owoSkin.Feel("Heal");
-                        break;
-                    case FistVR.PowerupType.MuscleMeat:
-                        owoSkin.Feel("MuscleMeat");
-                        break;
-                    case FistVR.PowerupType.Ghosted:
-                        owoSkin.Feel("Ghosted");
-                        break;
-                    case FistVR.PowerupType.Cyclops:
-                        owoSkin.Feel("Cyclops");
-                        break;
-                    default:
-                        owoSkin.LOG($"PowerupType - {type}");
-                        break;
-                }
-            }
-        }
-        #endregion
 
         [HarmonyPatch(typeof(FistVR.FVRPlayerBody), "KillPlayer", new Type[] { typeof(bool) })]
         public class OnPlayerKilled
@@ -312,58 +387,6 @@ namespace OWO_H3VR
                 //int intensity = (int) Math.Max(((40.0f - distance) / 40.0f), 0.0f);
                 //owoSkin.Feel("ExplosionBelly", intensity);
             }
-        }
-
-        #region Player damage
-
-        [HarmonyPatch(typeof(FistVR.FVRPlayerHitbox))]
-        [HarmonyPatch("Damage")]
-        [HarmonyPatch(new Type[] { typeof(FistVR.Damage) })]
-        public class OnDamageDealtHitbox
-        {
-            [HarmonyPostfix]
-            public static void Postfix(FistVR.FVRPlayerHitbox __instance, FistVR.Damage d)
-            {
-                // Get XZ-angle and y-shift of hit
-                FistVR.FVRPlayerBody myBody = __instance.Body;
-                var angleShift = getAngleAndShift(myBody, d.point);
-
-                // Different hit patterns for different damage classes
-                string feedbackKey = "BulletHit";
-                switch (d.Class)
-                {
-                    case FistVR.Damage.DamageClass.Projectile:
-                        feedbackKey = "BulletHit";
-                        break;
-                    case FistVR.Damage.DamageClass.Melee:
-                        feedbackKey = "BladeHit";
-                        break;
-                    case FistVR.Damage.DamageClass.Explosive:
-                        feedbackKey = "Impact";
-                        break;
-                    case FistVR.Damage.DamageClass.Environment:
-                        feedbackKey = "Impact";
-                        break;
-                    case FistVR.Damage.DamageClass.Abstract:
-                        feedbackKey = "BulletHit";
-                        break;
-                    default:
-                        break;
-                }
-
-                // If it's at the very top, play back a headshot
-                if (angleShift.Value == 0.5f) { tactsuitVr.HeadShot(angleShift.Key); }
-                else { tactsuitVr.PlayBackHit(feedbackKey, angleShift.Key, angleShift.Value); }
-
-                // Logging from when I tried to figure things out
-                //tactsuitVr.LOG("Dealt Body position: " + myBody.TorsoTransform.position.x.ToString() + " " + myBody.TorsoTransform.position.y.ToString() + " " + myBody.TorsoTransform.position.z.ToString());
-                //tactsuitVr.LOG("Dealt Hitpoint: " + d.point.x.ToString() + " " + d.point.y.ToString() + " " + d.point.z.ToString());
-                //tactsuitVr.LOG("Dealt StrikeDir: " + d.strikeDir.x.ToString() + " " + d.strikeDir.y.ToString() + " " + d.strikeDir.z.ToString());
-            }
-        }
-
-        #endregion
-         */
-
+        }*/
     }
 }
