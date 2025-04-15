@@ -36,20 +36,31 @@ namespace OWO_H3VR
         public class OnRecoil
         {
             [HarmonyPostfix]
-            public static void postfix(FVRFireArm __instance)
+            public static void postfix(FVRFireArm __instance, bool twoHandStabilized)
             {
-                owoSkin.LOG($"FVRFireArm - Recoil Right:{__instance.m_hand.IsThisTheRightHand}");
+                owoSkin.LOG($"FVRFireArm - Recoil Name:{__instance.name} TwoHAnds:{twoHandStabilized}");
                 
-                string gunname = "";
-                try { gunname = __instance.name; }
-                catch { owoSkin.LOG("gun name not found."); }
-
                 if (!owoSkin.suitEnabled) return;
 
-                owoSkin.FeelWithHand("Gun Recoil", 0, __instance.m_hand.IsThisTheRightHand);
+                string sensation;
+                SensationsDictionary.RecoilSensations.TryGetValue(__instance.name, out sensation);
+
+                if (sensation == null) sensation = "Pistol";
+                
+
+                if (twoHandStabilized) //esto está mal
+                {
+                    owoSkin.Feel($"{sensation} LR");
+                }
+                else
+                {
+                    owoSkin.FeelWithHand($"{sensation}", 0, __instance.m_hand.IsThisTheRightHand);
+                }
 
             }
         }
+
+        #region Movement
 
         [HarmonyPatch(typeof(FVRMovementManager), "Jump")]
         public class OnJump
@@ -62,9 +73,24 @@ namespace OWO_H3VR
                 if (!owoSkin.suitEnabled) return;
 
                 owoSkin.Feel("Jump");
-
             }
         }
+
+        [HarmonyPatch(typeof(FVRMovementManager), "DelayGround")]
+        public class OnDelayGround
+        {
+            [HarmonyPostfix]
+            public static void postfix()
+            {
+                owoSkin.LOG($"FVRMovementManager - DelayGround");
+
+                if (!owoSkin.suitEnabled) return;
+
+                owoSkin.Feel("Land");
+            }
+        }
+
+        #endregion
 
         #region World interaction
 
@@ -111,6 +137,55 @@ namespace OWO_H3VR
                 }
             }
         }
+
+        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "VomitObject", new Type[] { typeof(FistVR.FVRObject) })]
+        public class OnVomitObject
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                if (!owoSkin.suitEnabled) return;
+
+                owoSkin.Feel("Vomit");
+            }
+        }
+
+        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "EatBangerJunk")]
+        public class OnEatBangerJunk
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                if (!owoSkin.suitEnabled) return;
+
+                owoSkin.Feel("Eating");
+            }
+        }
+
+        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "EatHerb")]
+        public class OnEatHerb
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                if (!owoSkin.suitEnabled) return;
+
+                owoSkin.Feel("Eating");
+            }
+        }
+
+        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "EatMeatCore")]
+        public class OnEatMeatCore
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                if (!owoSkin.suitEnabled) return;
+
+                owoSkin.Feel("Eating");
+            }
+        }
+
         #endregion
 
         #region Player damage
