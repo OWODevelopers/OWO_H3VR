@@ -42,11 +42,7 @@ namespace OWO_H3VR
                 
                 if (!owoSkin.suitEnabled) return;
 
-                string sensation;
-                SensationsDictionary.RecoilSensations.TryGetValue(__instance.name, out sensation);
-
-                if (sensation == null) sensation = "Pistol";
-                
+                string sensation = SensationsDictionary.SensationByWeaponName(__instance.name);
 
                 if (twoHandStabilized) //esto está mal
                 {
