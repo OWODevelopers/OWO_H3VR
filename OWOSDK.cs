@@ -16,8 +16,11 @@ namespace OWO_H3VR
         EndPoint connectedTo = new IPEndPoint(0, 0);
         public bool isConnected = false;
 
-        int gameID = 0;
+        int gameID = 50891978;
         string auth;
+
+        private DateTime lastSendEndTime;
+        private int lastSendPriority = 0;
 
         public OWOSDK() 
         {
@@ -100,8 +103,10 @@ namespace OWO_H3VR
         #endregion
 
         #region Communication
-        public void Send(string sensation) 
+        public void Send(string sensation, string sensationOCL = "", int priority = 0) 
         {
+            if (!CanSendNextSensation(sensationOCL, priority)) return;
+
             Plugin.Log.LogInfo($"SENDING SENSATION: {gameID}*SENSATION*{sensation}");
 
             byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*SENSATION*{sensation}");
@@ -125,6 +130,36 @@ namespace OWO_H3VR
 
             auth = auth.Substring(0, auth.Length - 1);
             Plugin.Log.LogInfo($"### AUTH: {auth}");
+        }
+
+        #endregion
+
+        #region priority management
+
+        private bool CanSendNextSensation(string sensationOCL, int priority)
+        {
+            if (priority >= lastSendPriority || lastSendEndTime <= DateTime.Now) 
+            {
+                lastSendPriority = priority;
+                lastSendEndTime = DateTime.Now.AddMilliseconds(GetSensationMilliseconds(sensationOCL));
+                return true;
+            }
+
+            return false;
+        }
+
+        private int GetSensationMilliseconds(string sensationOCL)
+        {
+            var micros = sensationOCL.Split('~')[2].Split('&');
+            var result = 0;
+
+            foreach (var micro in micros)
+            {
+                result += Int32.Parse(micro.Split(',')[1]) + Int32.Parse(micro.Split(',')[5]);
+            }
+
+            result = result * 100;
+            return result;
         }
 
         #endregion
