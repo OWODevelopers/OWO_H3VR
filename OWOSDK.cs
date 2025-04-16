@@ -134,6 +134,8 @@ namespace OWO_H3VR
 
         #endregion
 
+        #region priority management
+
         private bool CanSendNextSensation(string sensationOCL, int priority)
         {
             if (priority >= lastSendPriority || lastSendEndTime <= DateTime.Now) 
@@ -159,6 +161,8 @@ namespace OWO_H3VR
             result = result * 100;
             return result;
         }
+
+        #endregion
 
     }
 }
