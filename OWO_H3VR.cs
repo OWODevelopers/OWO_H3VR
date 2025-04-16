@@ -42,7 +42,7 @@ namespace OWO_H3VR
                 
                 if (!owoSkin.suitEnabled) return;
 
-                string sensation = SensationsDictionary.SensationByWeaponName(__instance.name);
+                string sensation = SensationsDictionary.SensationByWeaponType(__instance.RoundType);
 
                 if (twoHandStabilized) //esto está mal
                 {
