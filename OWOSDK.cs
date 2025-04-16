@@ -16,7 +16,7 @@ namespace OWO_H3VR
         EndPoint connectedTo = new IPEndPoint(0, 0);
         public bool isConnected = false;
 
-        int gameID = 0;
+        int gameID = 50891978;
         string auth;
 
         public OWOSDK() 
