@@ -72,20 +72,6 @@ namespace OWO_H3VR
             }
         }
 
-        [HarmonyPatch(typeof(FVRMovementManager), "DelayGround")]
-        public class OnDelayGround
-        {
-            [HarmonyPostfix]
-            public static void postfix()
-            {
-                owoSkin.LOG($"FVRMovementManager - DelayGround");
-
-                if (!owoSkin.suitEnabled) return;
-
-                owoSkin.Feel("Land");
-            }
-        }
-
         #endregion
 
         #region World interaction
