@@ -1,92 +1,32 @@
-﻿using System;
+﻿using FistVR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static FistVR.RemoteGun;
 
 namespace OWO_H3VR
 {
     public static class SensationsDictionary
     {
-        public static Dictionary<String, String> RecoilSensations = new Dictionary<String, String>
+        static string[] shotgunRounds = { "a12g_Shotgun", "a20g_Shotgun", "a3gauge", "a12gaugeShort", "a12GaugeBelted", "a40_46_Grenade"};
+        static string[] rocketRounds = { "aRPG7Rocket", "aM1A1Rocket", "aPanzerSchreckRocket" };
+        static string[] rifleRounds = { "a50_BMG", "a20x82mm", "a13_2mmTuF", "a408Cheytac", "a50_Remington_BP", "a50mmPotato" };
+        static string[] battleRifleRounds = { "a762_51_Nato", "a762_54_Mosin", "a3006_Springfield", "a75x54mmFrench", "a762_54_Mosin", "a300_Winchester_Magnum", "a338Lapua" };
+        static string[] assaultRifleRounds = { "a556_45_Nato", "a545_39_Soviet", "a762_39_Soviet", "a280British", "a58x42mm", "a792x33mmKurz", "a762_39_Soviet" };
+
+
+        public static string SensationByWeaponType(FireArmRoundType roundType)
         {
-            {"a9_19_Parabellum","Pistol"},
-            {"a50ActionExpress","Pistol"},
-            {"a763x25mmMauser","Pistol"},
-            {"a8mmBergmann","Pistol"},
-            {"a765x25mmBorchardt","Pistol"},
-            {"a45_ACP","Pistol"},
-            {"a32ACP","Pistol"},
-            {"a50_Imaginary","Pistol"},
-            {"a357_Magnum","Pistol"},
-            {"a44_Magnum","Pistol"},
-            {"a22_LR","Pistol"},
-            {"a57x28mm","Pistol"},
-            {"a40_SW","Pistol"},
-            {"a25_ACP","Pistol"},
-            {"a9mmSteyr","Pistol"},
-            {"a9_18_Makarov","Pistol"},
-            {"a22WinchesterMagnum","Pistol"},
-            {"a38ACP","Pistol"},
-            {"a380_ACP","Pistol"},
-            {"a556_45_Nato","Pistol"},
-            {"a762_25_Tokarev","Pistol"},
-            {"a455WebleyAuto","Pistol"},
-            {"a792x57mmMauser","Pistol"},
-            {"a600MagnumBolt","Pistol"},
-            {"a45_70_Govt","Pistol"},
-            {"a38Special","Pistol"},
-            {"a454Casull","Pistol"},
-            {"a38Rimfire","Pistol"},
-            {"a357_Magnum","Pistol"},
-            {"a38Tround","Pistol"},
-            {"a106_25mmR","Pistol"},
-            {"a762x38mmR","Pistol"},
-            {"a762x42mm","Pistol"},
-            {"a22WinchesterMagnum","Pistol"},
-            {"a44_40Winchester","Pistol"},
-            {"a45_Colt","Pistol"},
-            {"a500SW","Pistol"},
-            {"a44_Magnum","Pistol"},
-            {"a455Webley","Pistol"},
-            {"a9mmSteyr","Pistol"},
-            {"a46x30mm","Pistol"},
-            {"a9_18_Makarov","Pistol"},
-            {"aCpbp","Pistol"},
-            {"a40_SW","Pistol"},
-            {"a25_ACP","Pistol"},
-            {"a380_ACP","Pistol"},
-            {"a762_54_Mosin","Pistol"},
-            {"a308_Winchester","Pistol"},
-            {"a41_Short","Pistol"},
-            {"a12g_Shotgun","Shotgun"},
-            {"a20g_Shotgun","Shotgun"},
-            {"a3gauge","Shotgun"},
-            {"a12gaugeShort","Shotgun"},
-            {"a12GaugeBelted","Shotgun"},
-            {"a40_46_Grenade","Shotgun"},
-            {"aRPG7Rocket","Rocket"},
-            {"aM1A1Rocket","Rocket"},
-            {"aPanzerSchreckRocket","Rocket"},
-            {"a50_BMG","Rifle"},
-            {"a20x82mm","Rifle"},
-            {"a13_2mmTuF","Rifle"},
-            {"a408Cheytac","Rifle"},
-            {"a50_Remington_BP","Rifle"},
-            {"a50mmPotato","Rifle"},
-            {"a762_51_Nato","Battle Rifle"},
-            {"a762_54_Mosin","Battle Rifle"},
-            {"a3006_Springfield","Battle Rifle"},
-            {"a75x54mmFrench","Battle Rifle"},
-            {"a762_54_Mosin","Battle Rifle"},
-            {"a300_Winchester_Magnum","Battle Rifle"},
-            {"a338Lapua","Battle Rifle"},
-            {"a556_45_Nato","Assault Rifle"},
-            {"a545_39_Soviet","Assault Rifle"},
-            {"a762_39_Soviet","Assault Rifle"},
-            {"a280British","Assault Rifle"},
-            {"a58x42mm","Assault Rifle"},
-            {"a792x33mmKurz","Assault Rifle"},
-            {"a762_39_Soviet","Assault Rifle"}
-        };
+            string prefix = "Pistol";            
+
+            if (rocketRounds.Any(roundType.ToString().Contains)) { prefix = "Rocket"; }
+            if (shotgunRounds.Any(roundType.ToString().Contains)) { prefix = "Shotgun"; }
+            if (rifleRounds.Any(roundType.ToString().Contains)) { prefix = "BigRifle"; }
+            if (battleRifleRounds.Any(roundType.ToString().Contains)) { prefix = "Rifle"; }
+            if (assaultRifleRounds.Any(roundType.ToString().Contains)) { prefix = "Rifle"; }
+
+            return prefix;
+        }
     };
 }
