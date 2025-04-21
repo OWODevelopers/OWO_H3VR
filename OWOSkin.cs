@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FistVR;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -209,26 +210,41 @@ namespace OWO_H3VR
         //        }
         //        /*
         //        //NEED TO TEST
-        //        public float GetHitAngle(FistVR.FVRPlayerBody player, Vector3 hit)
-        //        {
+        public float GetHitAngle(FistVR.FVRPlayerBody player, Damage d)
+        {
+            float num = Vector3.Angle(d.strikeDir, GM.CurrentPlayerBody.Head.forward);
+            float num2 = Vector3.Angle(d.strikeDir, GM.CurrentPlayerBody.Head.right);
 
-        //            Vector3 patternOrigin = new Vector3(0f, 0f, 1f);
-        //            Vector3 hitPosition = hit - player.TorsoTransform.position;
-        //            Quaternion PlayerRotation = player.TorsoTransform.rotation;
-        //            Vector3 playerDir = PlayerRotation.eulerAngles;
-        //            // get rid of the up/down component to analyze xz-rotation
-        //            Vector3 flattenedHit = new Vector3(hitPosition.x, 0f, hitPosition.z);
 
-        //            // get angle. .Net < 4.0 does not have a "SignedAngle" function...
-        //            float hitAngle = Vector3.SignedAngle(flattenedHit, patternOrigin,Vector3.up);
+            if (num > 90f)
+            {
+                LOG("### ESTOY MIRANDO");
+                if (num2 > 90f)
+                {
+                    LOG("### DERECHA");
+                }
+                else {
+                    LOG("### IZQUIERDA");
+                }
+            }
+            else 
+            { 
+               LOG("### ESTOY DE ESPALDAS");
 
-        //            float myRotation = hitAngle - playerDir.y;
-        //            myRotation *= -1f;
+                if (num2 > 90f)
+                {
+                    LOG("### DERECHA");
+                }
+                else
+                {
+                    LOG("### IZQUIERDA");
+                }
+            }
+            
+            LOG("### ANGLE" + num);
 
-        //            return myRotation;
-
-        //        }
-        //        */
+            return 0.0f;
+        }         
 
         //        #region heart beat loop
         //        public void StartHeartBeat()

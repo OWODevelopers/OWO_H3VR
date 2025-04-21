@@ -209,7 +209,9 @@ namespace OWO_H3VR
 
                 // Get XZ-angle and y-shift of hit
                 FVRPlayerBody myBody = __instance.Body;
-                //var angleShift = getAngleAndShift(myBody, d.point);
+                var angleShift = owoSkin.GetHitAngle(myBody, d);
+                owoSkin.LOG($"### STRIKE DIR: {d.strikeDir}");
+
 
                 if (__instance.Body.GetPlayerHealth() <= 0)
                 {
