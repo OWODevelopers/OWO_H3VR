@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using FistVR;
 using System;
+using UnityEngine;
 
 namespace OWO_H3VR
 {
@@ -44,7 +45,7 @@ namespace OWO_H3VR
 
                 string sensation = SensationsDictionary.SensationByWeaponType(__instance.RoundType);
 
-                if (twoHandStabilized) //esto está mal
+                if (twoHandStabilized || __instance.Foregrip.activeSelf) //esto está mal
                 {
                     owoSkin.Feel($"{sensation} LR");
                 }
@@ -63,12 +64,38 @@ namespace OWO_H3VR
         {
             [HarmonyPostfix]
             public static void postfix()
-            {
-                owoSkin.LOG($"FVRMovementManager - Jump");
-
+            {                
                 if (!owoSkin.suitEnabled) return;
 
                 owoSkin.Feel("Jump");
+            }
+        }
+
+        [HarmonyPatch(typeof(FistVR.FVRPhysicalObject), "OnCollisionEnter", new Type[] { typeof(Collision) })]
+        public class OnMeleeCollider
+        {
+            [HarmonyPostfix]
+            public static void Postfix(FistVR.FVRPhysicalObject __instance, Collision col)
+            {
+                if (!owoSkin.suitEnabled) return;
+
+
+                if (!__instance.IsHeld) { return; }
+                if (!__instance.MP.IsMeleeWeapon) { return; }
+                string collideWith = col.collider.name;
+                // Collision with shells or mags shouldn't trigger feedback. Guns are "melee" as well.
+                if (collideWith.Contains("Capsule") | collideWith.Contains("Mag")) { return; }
+                bool twohanded = __instance.IsAltHeld;
+                bool isRightHand = __instance.m_hand.IsThisTheRightHand;
+                float speed = col.relativeVelocity.magnitude;
+                // Also ignore very light bumps 
+                if (speed <= 1.0f) { return; }
+                // Scale feedback with the speed of the collision
+                int intensity = (int)Mathf.Clamp((Math.Min(0.2f + speed / 5.0f, 1.0f)) * 100, 50, 100);
+
+
+
+                owoSkin.FeelWithHand("Melee Attack", intensity, isRightHand);
             }
         }
 
@@ -176,11 +203,21 @@ namespace OWO_H3VR
         public class OnDamageDealtHitbox
         {
             [HarmonyPostfix]
-            public static void Postfix(FistVR.FVRPlayerHitbox __instance, FistVR.Damage d)
+            public static void Postfix(FVRPlayerHitbox __instance, Damage d)
             {
+                if (!owoSkin.CanFeel()) return;
+
                 // Get XZ-angle and y-shift of hit
                 FVRPlayerBody myBody = __instance.Body;
                 //var angleShift = getAngleAndShift(myBody, d.point);
+
+                if (__instance.Body.GetPlayerHealth() <= 0)
+                {
+                    owoSkin.StopAllHapticFeedback();
+                    owoSkin.Feel("Death", 4);
+                    owoSkin.playerIsAlive = false;
+                    return;
+                }
 
                 // Different hit patterns for different damage classes
                 string feedbackKey = "BulletHit";
@@ -199,13 +236,13 @@ namespace OWO_H3VR
                         feedbackKey = "Impact";
                         break;
                     case FistVR.Damage.DamageClass.Abstract:
-                        feedbackKey = "Bullet Hit";
+                        feedbackKey = "Impact";
                         break;
                     default:
                         break;
                 }
 
-                owoSkin.LOG($"Damage by: {feedbackKey}");
+                owoSkin.LOG($"Damage by: {feedbackKey} - life:{__instance.Body.GetPlayerHealth()}");
                 
                 if (!owoSkin.suitEnabled) return;
                 owoSkin.Feel(feedbackKey);
@@ -218,6 +255,17 @@ namespace OWO_H3VR
                 //tactsuitVr.LOG("Dealt Body position: " + myBody.TorsoTransform.position.x.ToString() + " " + myBody.TorsoTransform.position.y.ToString() + " " + myBody.TorsoTransform.position.z.ToString());
                 //tactsuitVr.LOG("Dealt Hitpoint: " + d.point.x.ToString() + " " + d.point.y.ToString() + " " + d.point.z.ToString());
                 //tactsuitVr.LOG("Dealt StrikeDir: " + d.strikeDir.x.ToString() + " " + d.strikeDir.y.ToString() + " " + d.strikeDir.z.ToString());
+            }
+        }
+
+        [HarmonyPatch(typeof(FVRPlayerBody), "ResetHealth")]
+        public class OnPlayerKilled
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                owoSkin.LOG("Reset health");
+                owoSkin.playerIsAlive = true;
             }
         }
 
@@ -284,34 +332,6 @@ namespace OWO_H3VR
            }
        }
 
-
-       [HarmonyPatch(typeof(FistVR.FVRPhysicalObject))]
-       [HarmonyPatch("OnCollisionEnter")]
-       [HarmonyPatch(new Type[] { typeof(Collision) })]
-       public class OnMeleeCollider
-       {
-           [HarmonyPostfix]
-           public static void Postfix(FistVR.FVRPhysicalObject __instance, Collision col)
-           {
-               if (!__instance.IsHeld) { return; }
-               if (!__instance.MP.IsMeleeWeapon) { return; }
-               string collideWith = col.collider.name;
-               // Collision with shells or mags shouldn't trigger feedback. Guns are "melee" as well.
-               if (collideWith.Contains("Capsule") | collideWith.Contains("Mag")) { return; }
-               bool twohanded = __instance.IsAltHeld;
-               bool isRightHand = __instance.m_hand.IsThisTheRightHand;
-               float speed = col.relativeVelocity.magnitude;
-               // Also ignore very light bumps 
-               if (speed <= 1.0f) { return; }
-               // Scale feedback with the speed of the collision
-               int intensity = (int)Mathf.Clamp((Math.Min(0.2f + speed / 5.0f, 1.0f))*100, 50, 100);
-
-
-
-               owoSkin.FeelWithHand("Melee Attack", intensity, isRightHand);
-           }
-       }
-
         #endregion
 
         // Tried to find the holster function. Did not yet succeed.
@@ -325,19 +345,7 @@ namespace OWO_H3VR
             }
         }
 
-        [HarmonyPatch(typeof(FistVR.FVRPlayerBody), "KillPlayer", new Type[] { typeof(bool) })]
-        public class OnPlayerKilled
-        {
-            [HarmonyPostfix]
-            public static void Postfix()
-            {
-
-                //maxHealth = 0; //??
-
-                owoSkin.StopAllHapticFeedback();
-                owoSkin.Feel("Death");
-            }
-        }
+     
 
         [HarmonyPatch(typeof(FistVR.MainMenuScreen), "Start", new Type[] { })]
         public class OnLoadMenuScreen
@@ -373,57 +381,6 @@ namespace OWO_H3VR
                 
                 if (health < maxHealth / 3.0f) { owoSkin.StartHeartBeat(); }
                 else { owoSkin.StopHeartBeat(); }
-            }
-        }
-
-
-        [HarmonyPatch(typeof(FistVR.FVRMovementManager), "RocketJump")]
-        public class OnRocketJump
-        {
-            [HarmonyPostfix]
-            public static void Postfix()
-            {
-                owoSkin.Feel("Jump");
-            }
-        }
-
-        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "VomitObject", new Type[] { typeof(FistVR.FVRObject) })]
-        public class OnVomitObject
-        {
-            [HarmonyPostfix]
-            public static void Postfix()
-            {
-                owoSkin.Feel("Vomit");
-            }
-        }
-
-        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "EatBangerJunk")]
-        public class OnEatBangerJunk
-        {
-            [HarmonyPostfix]
-            public static void Postfix()
-            {
-                owoSkin.Feel("Eating");
-            }
-        }
-
-        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "EatHerb")]
-        public class OnEatHerb
-        {
-            [HarmonyPostfix]
-            public static void Postfix()
-            {
-                owoSkin.Feel("Eating");
-            }
-        }
-
-        [HarmonyPatch(typeof(FistVR.ZosigGameManager), "EatMeatCore")]
-        public class OnEatMeatCore
-        {
-            [HarmonyPostfix]
-            public static void Postfix()
-            {
-                owoSkin.Feel("Eating");
             }
         }
 

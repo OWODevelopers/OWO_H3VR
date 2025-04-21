@@ -10,6 +10,8 @@ namespace OWO_H3VR
     {
         public OWOSDK owoSDK;
         public bool suitEnabled = false;
+        public bool playerIsAlive = true;
+
         //        private static bool heartBeatIsActive = false;
         //        private int heartbeatCount = 0;
 
@@ -133,7 +135,7 @@ namespace OWO_H3VR
         }
 
         #region Feels
-        public void Feel(String key, int Priority = 0, int intensity = 0)
+        public void Feel(String key, int priority = 0, int intensity = 0)
         {
             if (FeedbackMap.ContainsKey(key))
             {
@@ -149,7 +151,7 @@ namespace OWO_H3VR
                     }                    
                 }
 
-                owoSDK.Send(toSend);
+                owoSDK.Send(toSend, FeedbackMap[key], priority);
             }
 
             else LOG("Feedback not registered: " + key);
@@ -264,7 +266,7 @@ namespace OWO_H3VR
 
         public bool CanFeel()
         {
-            return suitEnabled;
+            return suitEnabled && playerIsAlive;
         }
     }
     }

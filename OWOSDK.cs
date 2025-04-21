@@ -150,6 +150,9 @@ namespace OWO_H3VR
 
         private int GetSensationMilliseconds(string sensationOCL)
         {
+
+            Plugin.owoSkin.LOG($"### SENSATION OCL:{sensationOCL}");            
+
             var micros = sensationOCL.Split('~')[2].Split('&');
             var result = 0;
 
