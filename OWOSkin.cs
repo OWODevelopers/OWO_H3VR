@@ -210,69 +210,43 @@ namespace OWO_H3VR
         //        }
         //        /*
         //        //NEED TO TEST
-        public float GetHitAngle(FistVR.FVRPlayerBody player, Damage d)
+        public void FeelDynamicDamage(FistVR.FVRPlayerBody player, Damage d)
         {
+            string sensation = "70,1,90,0,0,0,Hurt";
             float num = Vector3.Angle(d.strikeDir, GM.CurrentPlayerBody.Head.forward);
             float num2 = Vector3.Angle(d.strikeDir, GM.CurrentPlayerBody.Head.right);
 
 
             if (num > 90f)
-            {
-                LOG("### ESTOY MIRANDO");
+            {                
+                //LOG("### ESTOY MIRANDO");
                 if (num2 > 90f)
                 {
-                    LOG("### DERECHA");
+                    sensation += "|0%100, 1%50, 2%100, 3%50";
+                    //LOG("### DERECHA");
                 }
                 else {
-                    LOG("### IZQUIERDA");
+                    sensation += "|0%50, 1%100, 2%50, 3%100";
+                    //LOG("### IZQUIERDA");
                 }
             }
             else 
             { 
-               LOG("### ESTOY DE ESPALDAS");
-
+               //LOG("### ESTOY DE ESPALDAS");
                 if (num2 > 90f)
                 {
-                    LOG("### DERECHA");
+                    sensation += "|6%100, 7%50, 8%100, 9%50";
+                    //LOG("### DERECHA");
                 }
                 else
                 {
-                    LOG("### IZQUIERDA");
+                    sensation += "|6%50, 7%100, 8%50, 9%100";
+                    //LOG("### IZQUIERDA");
                 }
             }
-            
-            LOG("### ANGLE" + num);
 
-            return 0.0f;
+            owoSDK.SendDynamic(sensation, 3);
         }         
-
-        //        #region heart beat loop
-        //        public void StartHeartBeat()
-        //        {
-        //            if (heartBeatIsActive) return;
-
-        //            heartBeatIsActive = true;
-        //            HeartBeatFuncAsync();
-        //        }
-
-        //        public void StopHeartBeat()
-        //        {
-        //            heartbeatCount = 0;
-        //            heartBeatIsActive = false;
-        //        }
-
-        //        public async Task HeartBeatFuncAsync()
-        //        {
-        //            while (heartBeatIsActive && heartbeatCount <= 15)
-        //            {
-        //                heartbeatCount++;
-        //                Feel("Heart Beat", 0);
-        //                await Task.Delay(1000);
-        //            }
-
-        //            StopHeartBeat();
-        //        }
-        //        #endregion
 
 
         public void StopAllHapticFeedback()

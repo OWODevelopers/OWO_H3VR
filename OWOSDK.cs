@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections;
 using System.Net;
 using System.Net.Sockets;
@@ -114,6 +115,17 @@ namespace OWO_H3VR
             socket.SendTo(sendBytes, connectedTo);
         }
 
+        public void SendDynamic(string sensation, int priority)
+        {
+            if (!CanSendNextSensation(sensation, priority, false)) return;
+
+            Plugin.Log.LogInfo($"SENDING SENSATION: {gameID}*SENSATION*{sensation}");
+
+            byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*SENSATION*{sensation}");
+
+            socket.SendTo(sendBytes, connectedTo);
+        }
+
         public void Stop() 
         {
             byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*STOP");
@@ -136,24 +148,21 @@ namespace OWO_H3VR
 
         #region priority management
 
-        private bool CanSendNextSensation(string sensationOCL, int priority)
+        private bool CanSendNextSensation(string sensationOCL, int priority, bool isBaked = true)
         {
             if (priority >= lastSendPriority || lastSendEndTime <= DateTime.Now) 
             {
                 lastSendPriority = priority;
-                lastSendEndTime = DateTime.Now.AddMilliseconds(GetSensationMilliseconds(sensationOCL));
+                lastSendEndTime = DateTime.Now.AddMilliseconds(GetBakedMilliseconds(sensationOCL, isBaked));
                 return true;
             }
 
             return false;
         }
 
-        private int GetSensationMilliseconds(string sensationOCL)
-        {
-
-            Plugin.owoSkin.LOG($"### SENSATION OCL:{sensationOCL}");            
-
-            var micros = sensationOCL.Split('~')[2].Split('&');
+        private int GetBakedMilliseconds(string sensationOCL ,bool isBaked)
+        {        
+            var micros = isBaked ? sensationOCL.Split('~')[2].Split('&') : sensationOCL.Split('&');
             var result = 0;
 
             foreach (var micro in micros)
@@ -164,7 +173,6 @@ namespace OWO_H3VR
             result = result * 100;
             return result;
         }
-
         #endregion
 
     }

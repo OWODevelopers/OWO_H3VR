@@ -17,6 +17,7 @@ namespace OWO_H3VR
 
         public static OWOSkin owoSkin;
         public static OWOSDK owoSDK;
+        public static float lastHealth = 1f;
 
         private void Awake()
         {
@@ -207,13 +208,12 @@ namespace OWO_H3VR
             {
                 if (!owoSkin.CanFeel()) return;
 
-                // Get XZ-angle and y-shift of hit
-                FVRPlayerBody myBody = __instance.Body;
-                var angleShift = owoSkin.GetHitAngle(myBody, d);
-                owoSkin.LOG($"### STRIKE DIR: {d.strikeDir}");
+                float actualHealth = __instance.Body.GetPlayerHealth();
 
+                if (actualHealth == lastHealth) return;
+                lastHealth = actualHealth;
 
-                if (__instance.Body.GetPlayerHealth() <= 0)
+                if (actualHealth <= 0)
                 {
                     owoSkin.StopAllHapticFeedback();
                     owoSkin.Feel("Death", 4);
@@ -221,42 +221,38 @@ namespace OWO_H3VR
                     return;
                 }
 
+
+                FVRPlayerBody myBody = __instance.Body;
+                owoSkin.FeelDynamicDamage(myBody, d);
+
+
                 // Different hit patterns for different damage classes
-                string feedbackKey = "BulletHit";
-                switch (d.Class)
-                {
-                    case FistVR.Damage.DamageClass.Projectile:
-                        feedbackKey = "Bullet Hit";
-                        break;
-                    case FistVR.Damage.DamageClass.Melee:
-                        feedbackKey = "Blade Hit";
-                        break;
-                    case FistVR.Damage.DamageClass.Explosive:
-                        feedbackKey = "Impact";
-                        break;
-                    case FistVR.Damage.DamageClass.Environment:
-                        feedbackKey = "Impact";
-                        break;
-                    case FistVR.Damage.DamageClass.Abstract:
-                        feedbackKey = "Impact";
-                        break;
-                    default:
-                        break;
-                }
+                //string feedbackKey = "BulletHit";
+                //switch (d.Class)
+                //{
+                //    case FistVR.Damage.DamageClass.Projectile:
+                //        feedbackKey = "Bullet Hit";
+                //        break;
+                //    case FistVR.Damage.DamageClass.Melee:
+                //        feedbackKey = "Blade Hit";
+                //        break;
+                //    case FistVR.Damage.DamageClass.Explosive:
+                //        feedbackKey = "Impact";
+                //        break;
+                //    case FistVR.Damage.DamageClass.Environment:
+                //        feedbackKey = "Impact";
+                //        break;
+                //    case FistVR.Damage.DamageClass.Abstract:
+                //        feedbackKey = "Impact";
+                //        break;
+                //    default:
+                //        break;
+                //}
 
-                owoSkin.LOG($"Damage by: {feedbackKey} - life:{__instance.Body.GetPlayerHealth()}");
+                //owoSkin.LOG($"Damage by: {feedbackKey} - life:{__instance.Body.GetPlayerHealth()}");
                 
-                if (!owoSkin.suitEnabled) return;
-                owoSkin.Feel(feedbackKey);
-
-                // If it's at the very top, play back a headshot
-                //if (angleShift.Value == 0.5f) { tactsuitVr.HeadShot(angleShift.Key); }
-                //else { tactsuitVr.PlayBackHit(feedbackKey, angleShift.Key, angleShift.Value); }
-
-                // Logging from when I tried to figure things out
-                //tactsuitVr.LOG("Dealt Body position: " + myBody.TorsoTransform.position.x.ToString() + " " + myBody.TorsoTransform.position.y.ToString() + " " + myBody.TorsoTransform.position.z.ToString());
-                //tactsuitVr.LOG("Dealt Hitpoint: " + d.point.x.ToString() + " " + d.point.y.ToString() + " " + d.point.z.ToString());
-                //tactsuitVr.LOG("Dealt StrikeDir: " + d.strikeDir.x.ToString() + " " + d.strikeDir.y.ToString() + " " + d.strikeDir.z.ToString());
+                //if (!owoSkin.suitEnabled) return;
+                //owoSkin.Feel(feedbackKey);
             }
         }
 
