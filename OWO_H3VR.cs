@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using FistVR;
 using HarmonyLib;
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace OWO_H3VR
@@ -112,7 +113,7 @@ namespace OWO_H3VR
             public static void Postfix(FistVR.FVRPhysicalObject __instance, Collision col)
             {
                 if (!owoSkin.suitEnabled) return;
-
+                if (isCoroutineRunning) return;
 
                 if (!__instance.IsHeld) { return; }
                 if (!__instance.MP.IsMeleeWeapon) { return; }
@@ -120,16 +121,30 @@ namespace OWO_H3VR
                 string collideWith = col.collider.name;
                 // Collision with shells or mags shouldn't trigger feedback. Guns are "melee" as well.
                 if (collideWith.Contains("Capsule") | collideWith.Contains("Mag")) { return; }
-                bool twohanded = __instance.IsAltHeld;
-                bool isRightHand = __instance.m_hand.IsThisTheRightHand;
                 float speed = col.relativeVelocity.magnitude;
                 // Also ignore very light bumps 
+                owoSkin.LOG($"##Collision Speed: {speed}");
                 if (speed <= 1.2f) { return; }
-                // Scale feedback with the speed of the collision
-                int intensity = (int)Mathf.Clamp((Math.Min(0.2f + speed / 5.0f, 1.0f)) * 100, 50, 100);
 
-                owoSkin.FeelWithHand("Melee Attack", 0, isRightHand, intensity);
+                SendMeleeCollision(__instance, col, speed);
+
             }
+        }
+
+        public static bool isCoroutineRunning = false;
+
+        public static IEnumerator SendMeleeCollision(FistVR.FVRPhysicalObject __instance, Collision col, float speed)
+        {
+            isCoroutineRunning = true;
+
+            // Scale feedback with the speed of the collision
+            int intensity = (int)Mathf.Clamp((Math.Min(0.2f + speed / 5.0f, 1.0f)) * 100, 50, 100);
+            bool isRightHand = __instance.m_hand.IsThisTheRightHand;
+            bool twohanded = __instance.IsAltHeld;
+
+            owoSkin.FeelWithHand("Melee Attack", 0, isRightHand, intensity);
+            yield return new WaitForSeconds(0.1f);
+            isCoroutineRunning = false;
         }
 
         #endregion
