@@ -9,15 +9,24 @@ The OWO Skin is a haptic technology that allows you to feel everything that happ
 
 Want to get an OWO Suit? [Look here](https://owogame.com/shop/).
 
-# Installation [BepinEx_v5.4.21]
-- Download [BepinEx_v5.4.21]( https://github.com/BepInEx/BepInEx/releases/tag/v5.4.21).
+# Installation [BepinEx_v5.4.17]
+- Download [BepinEx_v5.4.17]( https://github.com/BepInEx/BepInEx/releases/tag/v5.4.17).
 - Extract the BepinEx zip data on the same folder of the game and run the game once.
 - Download the [lastest release of this mod](https://github.com/OWODevelopers/OWO_H3VR/releases/latest)
 - Extract the mod zip and place all files and the owo folder into the BepInEx\Plugins directory of your game installation.
 - Enjoy your inmersive experience! 😊
 
 # Featured effect
-
+- Jump
+- Landing
+- Death
+- Heal
+- Melee Attack
+- Different types of recoils
+- PowerUp
+- Hurt
+- Eating
+- Vomit
 
 # Manual Connection
 If you are having trouble with the automatic connection, create a .txt file called OWO_Manual_IP.txt  
