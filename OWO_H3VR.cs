@@ -40,12 +40,12 @@ namespace OWO_H3VR
         {
             [HarmonyPostfix]
             public static void postfix(FVRFireArm __instance, bool twoHandStabilized)
-            {
-                owoSkin.LOG($"FVRFireArm - Recoil Name:{__instance.name} TwoHAnds:{twoHandStabilized}");
-                
+            {                               
                 if (!owoSkin.suitEnabled) return;
 
                 string sensation = SensationsDictionary.SensationByWeaponType(__instance.RoundType);
+
+                if (sensation == "Pistol") owoSkin.LOG($"### -> ARMA NO REGISTRADA?? - {__instance.RoundType}");
 
                 if (twoHandStabilized || __instance.Foregrip.activeSelf) //esto está mal
                 {
