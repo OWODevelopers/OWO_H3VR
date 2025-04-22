@@ -13,9 +13,6 @@ namespace OWO_H3VR
         public bool suitEnabled = false;
         public bool playerIsAlive = true;
 
-        //        private static bool heartBeatIsActive = false;
-        //        private int heartbeatCount = 0;
-
         public Dictionary<String, String> FeedbackMap = new Dictionary<String, String>();
 
         public OWOSkin(OWOSDK owoSdkRef)
@@ -175,41 +172,6 @@ namespace OWO_H3VR
 
         #endregion
 
-
-        //        public void Feel360(String key, float myRotation)
-        //        {
-        //            Sensation toSend = FeedbackMap[key];
-
-        //            if (myRotation >= 0 && myRotation <= 180)
-        //            {
-        //                if (myRotation >= 0 && myRotation <= 90) toSend = toSend.WithMuscles(Muscle.Dorsal_L, Muscle.Lumbar_L);
-        //                else toSend = toSend.WithMuscles(Muscle.Dorsal_R, Muscle.Lumbar_R);
-        //            }
-        //            else
-        //            {
-        //                if (myRotation >= 270 && myRotation <= 359) toSend = toSend.WithMuscles(Muscle.Pectoral_L, Muscle.Abdominal_L);
-        //                else toSend.WithMuscles(Muscle.Pectoral_R, Muscle.Abdominal_R);
-        //            }
-
-        //            if (!suitEnabled) { return; }
-        //            OWO.Send(toSend.WithPriority(3));
-        //        }
-
-        //        #endregion
-
-        //        public string ConfigureRecoilBulletName(string bulletName)
-        //        {
-        //            SensationsDictionary.RecoilSensations.TryGetValue(bulletName, out string sensation);
-
-        //            if (sensation == null)
-        //            {
-        //                return "Default";
-        //            }
-
-        //            return sensation;
-        //        }
-        //        /*
-        //        //NEED TO TEST
         public void FeelDynamicDamage(FistVR.FVRPlayerBody player, Damage d)
         {
             string sensation = "70,1,90,0,0,0,Hurt";
@@ -217,31 +179,25 @@ namespace OWO_H3VR
             float num2 = Vector3.Angle(d.strikeDir, GM.CurrentPlayerBody.Head.right);
 
 
-            if (num > 90f)
+            if (num > 90f) //Facing
             {                
-                //LOG("### ESTOY MIRANDO");
-                if (num2 > 90f)
+                if (num2 > 90f) //Right
                 {
                     sensation += "|0%100, 1%50, 2%100, 3%50";
-                    //LOG("### DERECHA");
                 }
-                else {
+                else { //Left
                     sensation += "|0%50, 1%100, 2%50, 3%100";
-                    //LOG("### IZQUIERDA");
                 }
             }
-            else 
+            else //Back
             { 
-               //LOG("### ESTOY DE ESPALDAS");
-                if (num2 > 90f)
+                if (num2 > 90f) //Right
                 {
                     sensation += "|6%100, 7%50, 8%100, 9%50";
-                    //LOG("### DERECHA");
                 }
-                else
+                else //Left
                 {
                     sensation += "|6%50, 7%100, 8%50, 9%100";
-                    //LOG("### IZQUIERDA");
                 }
             }
 
@@ -259,4 +215,4 @@ namespace OWO_H3VR
             return suitEnabled && playerIsAlive;
         }
     }
-    }
+}

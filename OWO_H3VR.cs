@@ -18,6 +18,7 @@ namespace OWO_H3VR
         public static OWOSkin owoSkin;
         public static OWOSDK owoSDK;
         public static float lastHealth = 1f;
+        static bool jumping = false;
 
         private void Awake()
         {
@@ -63,12 +64,48 @@ namespace OWO_H3VR
         [HarmonyPatch(typeof(FVRMovementManager), "Jump")]
         public class OnJump
         {
-            [HarmonyPostfix]
-            public static void postfix()
+            [HarmonyPrefix]
+            public static void Prefix(FVRMovementManager __instance)
             {                
                 if (!owoSkin.suitEnabled) return;
 
-                owoSkin.Feel("Jump");
+                if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
+                {
+                    owoSkin.Feel("Jump");
+                    jumping = true;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(FVRMovementManager), "RocketJump")]
+        public class OnRocketJump
+        {
+            [HarmonyPrefix]
+            public static void Prefix(FVRMovementManager __instance)
+            {
+                if (!owoSkin.suitEnabled) return;
+
+                if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
+                {
+                    owoSkin.Feel("Jump");
+                    jumping = true;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(FVRMovementManager), "UpdateSmoothLocomotion")]
+        public class OnUpdateSmoothLocomotion
+        {
+            [HarmonyPostfix]
+            public static void Postfix(FVRMovementManager __instance)
+            {
+                if (!owoSkin.suitEnabled || jumping == false) return;
+
+                if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
+                {
+                    owoSkin.Feel("Landing");
+                    jumping = false;
+                }
             }
         }
 
