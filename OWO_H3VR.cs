@@ -126,7 +126,7 @@ namespace OWO_H3VR
                 owoSkin.LOG($"##Collision Speed: {speed}");
                 if (speed <= 1.2f) { return; }
 
-                SendMeleeCollision(__instance, col, speed);
+                __instance.StartCoroutine(SendMeleeCollision(__instance, col, speed));
 
             }
         }
