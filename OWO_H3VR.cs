@@ -262,5 +262,20 @@ namespace OWO_H3VR
         }
 
         #endregion
+
+
+        [HarmonyPatch(typeof(GrappleGun), "AttemptRetract")]
+        public class OnAttemptRetract
+        {
+            [HarmonyPostfix]
+            public static void Postfix(GrappleGun __instance, bool Pull)
+            {
+                if (!owoSkin.CanFeel()) return;
+                if (Pull && __instance.IsHeld)
+                {
+                    owoSkin.LOG($"Grapple me lleva");
+                }
+            }
+        }
     }
 }
