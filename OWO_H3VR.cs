@@ -138,6 +138,7 @@ namespace OWO_H3VR
 
                 if (!__instance.IsHeld) { return; }
                 if (!__instance.MP.IsMeleeWeapon) { return; }
+
                 string collideWith = col.collider.name;
                 // Collision with shells or mags shouldn't trigger feedback. Guns are "melee" as well.
                 if (collideWith.Contains("Capsule") | collideWith.Contains("Mag")) { return; }
@@ -145,13 +146,11 @@ namespace OWO_H3VR
                 bool isRightHand = __instance.m_hand.IsThisTheRightHand;
                 float speed = col.relativeVelocity.magnitude;
                 // Also ignore very light bumps 
-                if (speed <= 1.0f) { return; }
+                if (speed <= 1.2f) { return; }
                 // Scale feedback with the speed of the collision
                 int intensity = (int)Mathf.Clamp((Math.Min(0.2f + speed / 5.0f, 1.0f)) * 100, 50, 100);
 
-
-
-                owoSkin.FeelWithHand("Melee Attack", intensity, isRightHand);
+                owoSkin.FeelWithHand("Melee Attack", 0, isRightHand, intensity);
             }
         }
 
