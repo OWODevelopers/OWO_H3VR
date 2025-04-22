@@ -4,6 +4,7 @@ using HarmonyLib;
 using FistVR;
 using System;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 namespace OWO_H3VR
 {
@@ -81,14 +82,18 @@ namespace OWO_H3VR
         public class OnRocketJump
         {
             [HarmonyPrefix]
-            public static void Prefix(FVRMovementManager __instance)
+            public static void Prefix(FVRMovementManager __instance, Vector3 pos, Vector2 range, float vel)
             {
                 if (!owoSkin.suitEnabled) return;
 
-                if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
+                float num = Vector3.Distance(pos, GM.CurrentPlayerBody.Head.position);
+                if (!(num > range.y))
                 {
-                    owoSkin.Feel("Jump");
-                    jumping = true;
+                    if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
+                    {
+                        owoSkin.Feel("Jump");
+                        jumping = true;
+                    }
                 }
             }
         }
@@ -99,13 +104,22 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void Postfix(FVRMovementManager __instance)
             {
-                if (!owoSkin.suitEnabled || jumping == false) return;
+                if (!owoSkin.suitEnabled) return;
 
-                if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
+                if (jumping == false)
                 {
-                    owoSkin.Feel("Landing");
-                    jumping = false;
+                    jumping = true;
                 }
+                else
+                {
+                    if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
+                    {
+                        owoSkin.Feel("Landing");
+                        jumping = false;
+                    }
+
+                }
+
             }
         }
 
