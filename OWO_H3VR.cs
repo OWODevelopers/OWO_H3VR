@@ -42,7 +42,7 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void postfix(FVRFireArm __instance, bool twoHandStabilized, bool foregripStabilized)
             {
-                if (!owoSkin.suitEnabled) return;
+                if (!owoSkin.CanFeel()) return;
 
                 //bool activeForegrip = false;
                 //try { activeForegrip = __instance.Foregrip.activeSelf; }
@@ -72,7 +72,7 @@ namespace OWO_H3VR
             [HarmonyPrefix]
             public static void Prefix(FVRMovementManager __instance)
             {
-                if (!owoSkin.suitEnabled) return;
+                if (!owoSkin.CanFeel()) return;
 
                 if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
                 {
@@ -89,7 +89,7 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void Postfix(FVRMovementManager __instance)
             {
-                if (!owoSkin.suitEnabled) return;
+                if (!owoSkin.CanFeel()) return;
 
                 bool isGrounded = Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>();
 
@@ -112,7 +112,7 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void Postfix(FistVR.FVRPhysicalObject __instance, Collision col)
             {
-                if (!owoSkin.suitEnabled) return;
+                if (!owoSkin.CanFeel()) return;
                 if (isCoroutineRunning) return;
 
                 if (!__instance.IsHeld) { return; }
@@ -157,6 +157,8 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void Postfix(FistVR.PowerupType type)
             {
+                if (!owoSkin.CanFeel()) return;
+
                 // Powerup special effects in Take & Hold mode
                 switch (type)
                 {
@@ -201,7 +203,7 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void Postfix()
             {
-                if (!owoSkin.suitEnabled) return;
+                if (!owoSkin.CanFeel()) return;
 
                 owoSkin.Feel("Vomit");
             }
@@ -213,7 +215,7 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void Postfix()
             {
-                if (!owoSkin.suitEnabled) return;
+                if (!owoSkin.CanFeel()) return;
 
                 owoSkin.Feel("Eating");
             }
@@ -225,7 +227,7 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void Postfix()
             {
-                if (!owoSkin.suitEnabled) return;
+                if (!owoSkin.CanFeel()) return;
 
                 owoSkin.Feel("Eating");
             }
@@ -237,7 +239,7 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void Postfix()
             {
-                if (!owoSkin.suitEnabled) return;
+                if (!owoSkin.CanFeel()) return;
 
                 owoSkin.Feel("Eating");
             }
