@@ -1,10 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
-using HarmonyLib;
 using FistVR;
+using HarmonyLib;
 using System;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 
 namespace OWO_H3VR
 {
@@ -12,9 +11,9 @@ namespace OWO_H3VR
     public class Plugin : BaseUnityPlugin //CAMBIAR LAS REFERENCIAS DE UNITY POR LAS DEL JUEGO
     {
 
-        #pragma warning disable CS0109
+#pragma warning disable CS0109
         internal static new ManualLogSource Log;
-        #pragma warning restore CS0109
+#pragma warning restore CS0109
 
         public static OWOSkin owoSkin;
         public static OWOSDK owoSDK;
@@ -29,7 +28,7 @@ namespace OWO_H3VR
             owoSDK = new OWOSDK();
             owoSkin = new OWOSkin(owoSDK);
 
-            StartCoroutine(owoSDK.StartConnection());            
+            StartCoroutine(owoSDK.StartConnection());
             StartCoroutine(owoSkin.FinalizeOWOConnection());
 
             var harmony = new Harmony("owo.patch.h3vr");
@@ -41,7 +40,7 @@ namespace OWO_H3VR
         {
             [HarmonyPostfix]
             public static void postfix(FVRFireArm __instance, bool twoHandStabilized)
-            {                               
+            {
                 if (!owoSkin.suitEnabled) return;
                 bool activeForegrip = false;
 
@@ -71,7 +70,7 @@ namespace OWO_H3VR
         {
             [HarmonyPrefix]
             public static void Prefix(FVRMovementManager __instance)
-            {                
+            {
                 if (!owoSkin.suitEnabled) return;
 
                 if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
@@ -110,18 +109,16 @@ namespace OWO_H3VR
             {
                 if (!owoSkin.suitEnabled) return;
 
-                if (jumping == false)
+                bool isGrounded = Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>();
+
+                if (!jumping && !isGrounded)
                 {
                     jumping = true;
                 }
-                else
+                else if (jumping && isGrounded)
                 {
-                    if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
-                    {
-                        owoSkin.Feel("Landing");
-                        jumping = false;
-                    }
-
+                    owoSkin.Feel("Landing");
+                    jumping = false;
                 }
 
             }
@@ -254,7 +251,7 @@ namespace OWO_H3VR
 
         #region Player damage
 
-        [HarmonyPatch(typeof(FVRPlayerHitbox), "Damage", new Type[] { typeof(Damage)})]
+        [HarmonyPatch(typeof(FVRPlayerHitbox), "Damage", new Type[] { typeof(Damage) })]
         public class OnDamageDealtHitbox
         {
             [HarmonyPostfix]
@@ -304,7 +301,7 @@ namespace OWO_H3VR
                 //}
 
                 //owoSkin.LOG($"Damage by: {feedbackKey} - life:{__instance.Body.GetPlayerHealth()}");
-                
+
                 //if (!owoSkin.suitEnabled) return;
                 //owoSkin.Feel(feedbackKey);
             }
