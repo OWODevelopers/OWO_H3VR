@@ -81,25 +81,6 @@ namespace OWO_H3VR
             }
         }
 
-        [HarmonyPatch(typeof(FVRMovementManager), "RocketJump")]
-        public class OnRocketJump
-        {
-            [HarmonyPrefix]
-            public static void Prefix(FVRMovementManager __instance, Vector3 pos, Vector2 range, float vel)
-            {
-                if (!owoSkin.suitEnabled) return;
-
-                float num = Vector3.Distance(pos, GM.CurrentPlayerBody.Head.position);
-                if (!(num > range.y))
-                {
-                    if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
-                    {
-                        owoSkin.Feel("Jump");
-                        jumping = true;
-                    }
-                }
-            }
-        }
 
         [HarmonyPatch(typeof(FVRMovementManager), "UpdateSmoothLocomotion")]
         public class OnUpdateSmoothLocomotion
