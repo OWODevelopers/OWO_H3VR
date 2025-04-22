@@ -43,12 +43,16 @@ namespace OWO_H3VR
             public static void postfix(FVRFireArm __instance, bool twoHandStabilized)
             {                               
                 if (!owoSkin.suitEnabled) return;
+                bool activeForegrip = false;
+
+                try { activeForegrip = __instance.Foregrip.activeSelf; }
+                catch (Exception e) { }
 
                 string sensation = SensationsDictionary.SensationByWeaponType(__instance.RoundType);
 
                 if (sensation == "Pistol") owoSkin.LOG($"### -> ARMA NO REGISTRADA?? - {__instance.RoundType}");
 
-                if (twoHandStabilized || __instance.Foregrip.activeSelf) //esto está mal
+                if (twoHandStabilized || activeForegrip) //dejar como ultimo paso a comprobar
                 {
                     owoSkin.Feel($"{sensation} LR");
                 }
