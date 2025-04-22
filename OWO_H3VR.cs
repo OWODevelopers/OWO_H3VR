@@ -39,19 +39,19 @@ namespace OWO_H3VR
         public class OnRecoil
         {
             [HarmonyPostfix]
-            public static void postfix(FVRFireArm __instance, bool twoHandStabilized)
+            public static void postfix(FVRFireArm __instance, bool twoHandStabilized, bool foregripStabilized)
             {
                 if (!owoSkin.suitEnabled) return;
-                bool activeForegrip = false;
 
-                try { activeForegrip = __instance.Foregrip.activeSelf; }
-                catch (Exception e) { }
+                //bool activeForegrip = false;
+                //try { activeForegrip = __instance.Foregrip.activeSelf; }
+                //catch (Exception e) { }
 
                 string sensation = SensationsDictionary.SensationByWeaponType(__instance.RoundType);
 
-                if (sensation == "Pistol") owoSkin.LOG($"### -> ARMA NO REGISTRADA?? - {__instance.RoundType}");
+                //if (sensation == "Pistol") owoSkin.LOG($"### -> ARMA NO REGISTRADA?? - {__instance.RoundType}");
 
-                if (twoHandStabilized || activeForegrip) //dejar como ultimo paso a comprobar
+                if (twoHandStabilized || foregripStabilized) //dejar como ultimo paso a comprobar
                 {
                     owoSkin.Feel($"{sensation} LR");
                 }
