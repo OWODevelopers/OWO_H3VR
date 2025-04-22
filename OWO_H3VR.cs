@@ -166,32 +166,8 @@ namespace OWO_H3VR
                     case FistVR.PowerupType.Regen:
                         owoSkin.Feel("Heal");
                         break;
-                    case FistVR.PowerupType.Explosive:
-                        owoSkin.Feel("Explosion Face");
-                        break;
-                    case FistVR.PowerupType.InfiniteAmmo:
-                        owoSkin.Feel("Infinite Ammo");
-                        break;
-                    case FistVR.PowerupType.Invincibility:
-                        owoSkin.Feel("Invincibility");
-                        break;
-                    case FistVR.PowerupType.QuadDamage:
-                        owoSkin.Feel("QuadDamage");
-                        break;
-                    case FistVR.PowerupType.SpeedUp:
-                        owoSkin.Feel("Heart Beat Fast");
-                        break;
-                    case FistVR.PowerupType.MuscleMeat:
-                        owoSkin.Feel("Muscle Meat");
-                        break;
-                    case FistVR.PowerupType.Ghosted:
-                        owoSkin.Feel("Ghosted");
-                        break;
-                    case FistVR.PowerupType.Cyclops:
-                        owoSkin.Feel("Cyclops");
-                        break;
                     default:
-                        owoSkin.LOG($"PowerupType - {type}");
+                        owoSkin.Feel("PowerUp");
                         break;
                 }
             }
