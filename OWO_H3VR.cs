@@ -129,7 +129,7 @@ namespace OWO_H3VR
             bool isRightHand = __instance.m_hand.IsThisTheRightHand;
             bool twohanded = __instance.IsAltHeld;
 
-            owoSkin.FeelWithHand("Melee Attack", 0, isRightHand, twohanded, intensity);
+            owoSkin.FeelWithHand("Melee", 0, isRightHand, twohanded, intensity);
             yield return new WaitForSeconds(0.1f);
             isCoroutineRunning = false;
         }
@@ -154,7 +154,7 @@ namespace OWO_H3VR
                         owoSkin.Feel("Heal");
                         break;
                     default:
-                        owoSkin.Feel("PowerUp");
+                        owoSkin.Feel("Power Up");
                         break;
                 }
             }
