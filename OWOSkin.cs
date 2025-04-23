@@ -161,9 +161,9 @@ namespace OWO_H3VR
             {
                 String toSend = FeedbackMap[key].Split('~')[0];
 
-                int principal = 80;
-                int connected = 50;
-                int secondary = 30;
+                int principal = 100;
+                int connected = 80;
+                int secondary = 60;
 
                 if (intensity != 0)
                 {
@@ -178,7 +178,7 @@ namespace OWO_H3VR
                     toSend += $"|0%{connected},4%{principal},6%{secondary}";
                     if (dualHands)
                     {
-                        toSend += $",1%{connected - 20},5%{principal - 20},7%{secondary - 10}";
+                        toSend += $",1%{connected - 15},5%{principal - 20},7%{secondary - 10}";
                     }
                 }
                 else
@@ -186,7 +186,7 @@ namespace OWO_H3VR
                     toSend += $"|1%{connected},5%{principal},7%{secondary}";
                     if (dualHands)
                     {
-                        toSend += $",0%{connected - 20},4%{principal - 20},6%{secondary - 10}";
+                        toSend += $",0%{connected - 15},4%{principal - 20},6%{secondary - 10}";
                     }
                 }
 
