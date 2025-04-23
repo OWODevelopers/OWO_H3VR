@@ -42,13 +42,13 @@ namespace OWO_H3VR
         {
             yield return new WaitForSeconds(.1f);
 
-            Plugin.Log.LogInfo("Start...");            
+            //Plugin.Log.LogInfo("Start...");            
             string toSend = "ping";
             var authEncoded = System.Text.Encoding.UTF8.GetBytes(auth);
 
             while (!isConnected)
             {
-                Plugin.Log.LogInfo("Sending ping !");
+                //Plugin.Log.LogInfo("Sending ping !");
 
                 byte[] sendBytes = Encoding.UTF8.GetBytes(toSend);
                 socket.SendTo(sendBytes, remoteEndPoint);
@@ -69,8 +69,7 @@ namespace OWO_H3VR
 
                         if (result == "pong")
                         {
-                            Plugin.Log.LogInfo("PONG");
-
+                            //Plugin.Log.LogInfo("PONG");
                             isConnected = true;
                         }
 
