@@ -155,19 +155,31 @@ namespace OWO_H3VR
             else LOG("Feedback not registered: " + key);
         }
 
-        public void FeelWithHand(String key, int priority = 0, bool isRightHand = true, int intensity = 0)
+        public void FeelWithHand(String key, int priority = 0, bool isRightHand = true, bool dualHands = false, int intensity = 0)
         {
-
-            if (isRightHand)
+            if (FeedbackMap.ContainsKey(key))
             {
-                key += " R";
-            }
-            else
-            {
-                key += " L";
-            }
+                String toSend = FeedbackMap[key].Split('~')[0];
 
-            Feel(key, priority, intensity);
+                if (isRightHand)
+                {
+                    toSend += "|0%50,4%80,6%30";
+                    if (dualHands)
+                    {
+                        toSend += "1%30,5%50,7%20";
+                    }
+                }
+                else
+                {
+                    toSend += "|1%50,5%80,7%30";
+                    if (dualHands)
+                    {
+                        toSend += "0%30,4%50,6%20";
+                    }
+                }
+
+                owoSDK.Send(toSend, FeedbackMap[key], priority);
+            }
         }
 
         #endregion

@@ -44,20 +44,10 @@ namespace OWO_H3VR
             {
                 if (!owoSkin.CanFeel()) return;
 
-
-
                 string sensation = SensationsDictionary.SensationByWeaponType(__instance.RoundType);
+                bool isDualHand = (twoHandStabilized || foregripStabilized);
 
-
-                if (twoHandStabilized || foregripStabilized) 
-                {
-                    owoSkin.Feel($"{sensation} LR");
-                }
-                else
-                {
-                    owoSkin.FeelWithHand($"{sensation}", 0, __instance.m_hand.IsThisTheRightHand);
-                }
-
+                owoSkin.FeelWithHand($"{sensation}", 2, __instance.m_hand.IsThisTheRightHand, isDualHand);
             }
         }
 
