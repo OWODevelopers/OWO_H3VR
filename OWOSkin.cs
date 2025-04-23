@@ -178,7 +178,7 @@ namespace OWO_H3VR
                     toSend += $"|0%{connected},4%{principal},6%{secondary}";
                     if (dualHands)
                     {
-                        toSend += $"|1%{connected - 20},5%{principal - 20},7%{secondary - 10}";
+                        toSend += $",1%{connected - 20},5%{principal - 20},7%{secondary - 10}";
                     }
                 }
                 else
@@ -186,7 +186,7 @@ namespace OWO_H3VR
                     toSend += $"|1%{connected},5%{principal},7%{secondary}";
                     if (dualHands)
                     {
-                        toSend += $"|0%{connected - 20},4%{principal - 20},6%{secondary - 10}";
+                        toSend += $",0%{connected - 20},4%{principal - 20},6%{secondary - 10}";
                     }
                 }
 
