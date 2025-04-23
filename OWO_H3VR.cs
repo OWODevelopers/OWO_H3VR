@@ -111,7 +111,7 @@ namespace OWO_H3VR
                 float speed = col.relativeVelocity.magnitude;
                 // Also ignore very light bumps 
                 owoSkin.LOG($"##Collision Speed: {speed}");
-                if (speed <= 1.2f) { return; }
+                if (speed <= 2f) { return; }
 
                 __instance.StartCoroutine(SendMeleeCollision(__instance, col, speed));
 
@@ -129,7 +129,7 @@ namespace OWO_H3VR
             bool isRightHand = __instance.m_hand.IsThisTheRightHand;
             bool twohanded = __instance.IsAltHeld;
 
-            owoSkin.FeelWithHand("Melee Attack", 0, isRightHand, intensity);
+            owoSkin.FeelWithHand("Melee Attack", 0, isRightHand, twohanded, intensity);
             yield return new WaitForSeconds(0.1f);
             isCoroutineRunning = false;
         }
