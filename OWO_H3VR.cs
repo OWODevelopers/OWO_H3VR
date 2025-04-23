@@ -136,7 +136,7 @@ namespace OWO_H3VR
             int intensity = (int)Mathf.Clamp((Math.Min(0.2f + speed / 5.0f, 1.0f)) * 100, 50, 100);
             bool twohanded = __instance.AltGrip ? __instance.AltGrip.IsHeld : false;
 
-            owoSkin.FeelWithHand("Melee", 0, isRightHand, twohanded, intensity);
+            owoSkin.FeelWithHand("Melee", 1, isRightHand, twohanded, intensity);
             yield return new WaitForSeconds(.2f);
             
             if (isRightHand) isCoroutineRRunning = false;

@@ -137,15 +137,15 @@ namespace OWO_H3VR
         {
             if (FeedbackMap.ContainsKey(key))
             {
-                String toSend = FeedbackMap[key].Split('~')[0]; //enviamos solo el ID al ser baked
+                String toSend = FeedbackMap[key].Split('~')[0]; //obtain the sensation id
 
                 if (intensity != 0)
                 {
-                    toSend += "|"; //separamos los musculos
+                    toSend += "|"; //add the muscles section
 
                     for (int i = 0; i < 10; i++)
                     {
-                        toSend += $"{i}%{intensity},"; //asignamos la intensidad a cada musculo
+                        toSend += $"{i}%{intensity},"; //apply intensity per muscle
                     }                    
                 }
 
@@ -154,7 +154,6 @@ namespace OWO_H3VR
 
             else LOG("Feedback not registered: " + key);
         }
-
         public void FeelWithHand(String key, int priority = 0, bool isRightHand = true, bool dualHands = false, int intensity = 0)
         {
             if (FeedbackMap.ContainsKey(key))
@@ -193,9 +192,6 @@ namespace OWO_H3VR
                 owoSDK.Send(toSend, FeedbackMap[key], priority);
             }
         }
-
-        #endregion
-
         public void FeelDynamicDamage(FistVR.FVRPlayerBody player, Damage d)
         {
             string sensation = "70,1,90,0,0,0,Hurt";
@@ -227,6 +223,9 @@ namespace OWO_H3VR
 
             owoSDK.SendDynamic(sensation, 3);
         }         
+
+        #endregion
+
 
 
         public void StopAllHapticFeedback()
