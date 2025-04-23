@@ -127,10 +127,10 @@ namespace OWO_H3VR
             // Scale feedback with the speed of the collision
             int intensity = (int)Mathf.Clamp((Math.Min(0.2f + speed / 5.0f, 1.0f)) * 100, 50, 100);
             bool isRightHand = __instance.m_hand.IsThisTheRightHand;
-            bool twohanded = __instance.IsAltHeld;
+            bool twohanded = __instance.AltGrip ? __instance.AltGrip.IsHeld : false;
 
             owoSkin.FeelWithHand("Melee", 0, isRightHand, twohanded, intensity);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(.2f);
             isCoroutineRunning = false;
         }
 
