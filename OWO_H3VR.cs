@@ -63,7 +63,7 @@ namespace OWO_H3VR
 
                 if (Traverse.Create(__instance).Field("m_isGrounded").GetValue<bool>())
                 {
-                    owoSkin.Feel("Jump");
+                    owoSkin.Feel("Jump",2);
                     jumping = true;
                 }
             }
@@ -86,7 +86,7 @@ namespace OWO_H3VR
                 }
                 else if (jumping && isGrounded)
                 {
-                    owoSkin.Feel("Landing");
+                    owoSkin.Feel("Landing",1);
                     jumping = false;
                 }
 
@@ -100,10 +100,15 @@ namespace OWO_H3VR
             public static void Postfix(FistVR.FVRPhysicalObject __instance, Collision col)
             {
                 if (!owoSkin.CanFeel()) return;
-                if (isCoroutineRunning) return;
 
                 if (!__instance.IsHeld) { return; }
                 if (!__instance.MP.IsMeleeWeapon) { return; }
+
+                bool isRightHand = __instance.m_hand.IsThisTheRightHand;
+
+                owoSkin.LOG($"### Derecha - {(isRightHand && isCoroutineRRunning)} | IZQUIERDA - {(!isRightHand && isCoroutineLRunning)}");
+
+                if ((isRightHand && isCoroutineRRunning) || (!isRightHand && isCoroutineLRunning)) return;
 
                 string collideWith = col.collider.name;
                 // Collision with shells or mags shouldn't trigger feedback. Guns are "melee" as well.
@@ -113,25 +118,29 @@ namespace OWO_H3VR
                 owoSkin.LOG($"##Collision Speed: {speed}");
                 if (speed <= 2f) { return; }
 
-                __instance.StartCoroutine(SendMeleeCollision(__instance, col, speed));
+                __instance.StartCoroutine(SendMeleeCollision(__instance, col, speed, isRightHand));
 
             }
         }
 
-        public static bool isCoroutineRunning = false;
+        public static bool isCoroutineLRunning = false;
+        public static bool isCoroutineRRunning = false;
 
-        public static IEnumerator SendMeleeCollision(FistVR.FVRPhysicalObject __instance, Collision col, float speed)
+        public static IEnumerator SendMeleeCollision(FistVR.FVRPhysicalObject __instance, Collision col, float speed, bool isRightHand)
         {
-            isCoroutineRunning = true;
+            if (isRightHand) isCoroutineRRunning = true;
+            else isCoroutineLRunning = true;
+
 
             // Scale feedback with the speed of the collision
             int intensity = (int)Mathf.Clamp((Math.Min(0.2f + speed / 5.0f, 1.0f)) * 100, 50, 100);
-            bool isRightHand = __instance.m_hand.IsThisTheRightHand;
             bool twohanded = __instance.AltGrip ? __instance.AltGrip.IsHeld : false;
 
             owoSkin.FeelWithHand("Melee", 0, isRightHand, twohanded, intensity);
             yield return new WaitForSeconds(.2f);
-            isCoroutineRunning = false;
+            
+            if (isRightHand) isCoroutineRRunning = false;
+            else isCoroutineLRunning = false;
         }
 
         #endregion
@@ -151,10 +160,10 @@ namespace OWO_H3VR
                 {
                     case FistVR.PowerupType.Health:
                     case FistVR.PowerupType.Regen:
-                        owoSkin.Feel("Heal");
+                        owoSkin.Feel("Heal",2);
                         break;
                     default:
-                        owoSkin.Feel("Power Up");
+                        owoSkin.Feel("Power Up",2);
                         break;
                 }
             }
@@ -168,7 +177,7 @@ namespace OWO_H3VR
             {
                 if (!owoSkin.CanFeel()) return;
 
-                owoSkin.Feel("Vomit");
+                owoSkin.Feel("Vomit",1);
             }
         }
 
@@ -180,7 +189,7 @@ namespace OWO_H3VR
             {
                 if (!owoSkin.CanFeel()) return;
 
-                owoSkin.Feel("Eating");
+                owoSkin.Feel("Eating",1);
             }
         }
 
@@ -192,7 +201,7 @@ namespace OWO_H3VR
             {
                 if (!owoSkin.CanFeel()) return;
 
-                owoSkin.Feel("Eating");
+                owoSkin.Feel("Eating",1);
             }
         }
 
@@ -204,7 +213,7 @@ namespace OWO_H3VR
             {
                 if (!owoSkin.CanFeel()) return;
 
-                owoSkin.Feel("Eating");
+                owoSkin.Feel("Eating",1);
             }
         }
 
