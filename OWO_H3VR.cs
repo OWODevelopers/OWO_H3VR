@@ -106,7 +106,7 @@ namespace OWO_H3VR
 
                 bool isRightHand = __instance.m_hand.IsThisTheRightHand;
 
-                owoSkin.LOG($"### Derecha - {(isRightHand && isCoroutineRRunning)} | IZQUIERDA - {(!isRightHand && isCoroutineLRunning)}");
+                //owoSkin.LOG($"### Derecha - {(isRightHand && isCoroutineRRunning)} | IZQUIERDA - {(!isRightHand && isCoroutineLRunning)}");
 
                 if ((isRightHand && isCoroutineRRunning) || (!isRightHand && isCoroutineLRunning)) return;
 
@@ -115,7 +115,7 @@ namespace OWO_H3VR
                 if (collideWith.Contains("Capsule") | collideWith.Contains("Mag")) { return; }
                 float speed = col.relativeVelocity.magnitude;
                 // Also ignore very light bumps 
-                owoSkin.LOG($"##Collision Speed: {speed}");
+                //owoSkin.LOG($"##Collision Speed: {speed}");
                 if (speed <= 2f) { return; }
 
                 __instance.StartCoroutine(SendMeleeCollision(__instance, col, speed, isRightHand));
@@ -255,7 +255,6 @@ namespace OWO_H3VR
             [HarmonyPostfix]
             public static void Postfix()
             {
-                owoSkin.LOG("Reset health");
                 owoSkin.playerIsAlive = true;
             }
         }

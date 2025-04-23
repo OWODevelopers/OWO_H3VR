@@ -93,8 +93,6 @@ namespace OWO_H3VR
 
         public void Disconnect()
         {
-            Plugin.Log.LogInfo("Sending sensation");
-
             byte[] sendBytes = Encoding.UTF8.GetBytes($"OWO_Close");
             socket.SendTo(sendBytes, connectedTo);
 
@@ -108,7 +106,7 @@ namespace OWO_H3VR
         {
             if (!CanSendNextSensation(sensationOCL, priority)) return;
 
-            Plugin.Log.LogInfo($"SENDING SENSATION: {gameID}*SENSATION*{sensation}");
+            //Plugin.Log.LogInfo($"SENDING SENSATION: {gameID}*SENSATION*{sensation}");
 
             byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*SENSATION*{sensation}");
 
@@ -119,7 +117,7 @@ namespace OWO_H3VR
         {
             if (!CanSendNextSensation(sensation, priority, false)) return;
 
-            Plugin.Log.LogInfo($"SENDING SENSATION: {gameID}*SENSATION*{sensation}");
+            //Plugin.Log.LogInfo($"SENDING SENSATION: {gameID}*SENSATION*{sensation}");
 
             byte[] sendBytes = Encoding.UTF8.GetBytes($"{gameID}*SENSATION*{sensation}");
 
@@ -141,7 +139,7 @@ namespace OWO_H3VR
             }
 
             auth = auth.Substring(0, auth.Length - 1);
-            Plugin.Log.LogInfo($"### AUTH: {auth}");
+            //Plugin.Log.LogInfo($"### AUTH: {auth}");
         }
 
         #endregion
