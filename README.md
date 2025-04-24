@@ -1,5 +1,6 @@
 # OWO_H3VR
-OWO game x Hot Dogs, Horseshoes & Hand Grenades (H3VR) integration
+OWO game x Hot Dogs, Horseshoes & Hand Grenades (H3VR) integration.
+This mod is based on the work of [Florian](https://github.com/floh-bhaptics/H3VR_bhaptics).
 
 ## What is OWO?
 The OWO Skin is a haptic technology that allows you to feel everything that happens in a videogame. The OWO is capable of delivering highly realistic and precise sensations, such as the feeling of impacts, the recoils from your weapons, or even the subtle sensation of insects moving across your skin.
