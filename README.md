@@ -1,9 +1,6 @@
 # OWO_H3VR
 OWO game x Hot Dogs, Horseshoes & Hand Grenades (H3VR) integration
 
-## Warning
-Let me be very clear up front: H3VR is a multiplayer game. If you try to cheat via mods, you are likely going to get your account banned, and nobody will like you. Even with this workaround, H3VR will know that you are running a mod, and it will tell you right at startup that it knows. This mod here should be fine, it is not cheating and only provides additional immersive feedback, as anyone can see in this source code.
-
 ## What is OWO?
 The OWO Skin is a haptic technology that allows you to feel everything that happens in a videogame. The OWO is capable of delivering highly realistic and precise sensations, such as the feeling of impacts, the recoils from your weapons, or even the subtle sensation of insects moving across your skin.
 
